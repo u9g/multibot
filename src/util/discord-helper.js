@@ -14,4 +14,14 @@ const escapeMarkdown = text => {
   return escaped;
 };
 
-module.exports = { allAcountsBusy, escapeMarkdown };
+const removeCommas = x => x.replace(/,/g, '');
+
+const numberWithCommas = x => {
+  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+};
+module.exports = {
+  allAcountsBusy,
+  escapeMarkdown,
+  removeCommas,
+  numberWithCommas
+};

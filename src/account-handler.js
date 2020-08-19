@@ -1,14 +1,14 @@
 const mineflayer = require('mineflayer');
 
-const join = bot => bot.once('spawn', () => bot.chat('/join'));
-
 class Account {
   constructor (options) {
     this.options = options;
     this.bot = mineflayer.createBot(options);
     this.busy = false;
-    join(this.bot);
-    console.log();
+    this.bot.once('spawn', () => {
+      this.bot.chat('/join');
+      this.busy = false;
+    });
   }
 
   relog () {
@@ -16,12 +16,18 @@ class Account {
     this.bot.end();
     setTimeout(() => {
       this.bot = mineflayer.createBot(this.options);
-      join(this.bot);
-      this.busy = false;
+      this.bot.once('spawn', () => {
+        this.bot.chat('/join');
+        this.busy = false;
+      });
     }, 5000);
   }
 
-  return () {
+  setBusy () {
+    this.busy = true;
+  }
+
+  done () {
     this.busy = false;
   }
 }
@@ -35,7 +41,6 @@ class Accounts {
         host: 'cosmicsky.com'
       });
     });
-    console.log('');
   }
 
   takeOne () {
@@ -44,6 +49,28 @@ class Accounts {
       acc.busy = true;
       return acc;
     } else return null;
+  }
+
+  status () {
+    const isBusy = b => (b ? 'is busy.' : 'is not busy.');
+    return this.accounts
+      .map((elem, ix) => `${ix}. ${elem.bot.username}: ${isBusy(elem.busy)}`)
+      .join('\n');
+  }
+
+  toggleBusy (ix) {
+    this.accounts[ix].busy = !this.accounts[ix].busy;
+  }
+
+  relogAccount (ix) {
+    this.accounts[ix].relog();
+  }
+
+  takeMany () {
+    const SAFE_ACCOUNTS = 1; // # of accounts not used during mass account actions
+    const availAccs = this.accounts.filter(x => !x.busy); // accounts ready for mass use
+    if (availAccs.length === 0) return null;
+    return availAccs.slice(SAFE_ACCOUNTS);
   }
 }
 

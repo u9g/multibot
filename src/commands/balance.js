@@ -18,6 +18,7 @@ module.exports = {
     renderCommand(acc.bot, args[0]).then(embed => {
       message.channel.send(embed);
       acc.bot.removeAllListeners();
+      acc.done();
     });
   }
 };
@@ -53,7 +54,6 @@ function renderCommand (bot, ign) {
       }
     });
     bot.chat(`/bal ${ign}`);
-    bot.chat('/msg u9g hi');
   });
 
   function CreateNotBalanceEmbed () {
