@@ -57,13 +57,16 @@ async function asyncRunner (acc, args, message) {
 
 function makeEmbed (players, name) {
   const sorted = sortBalances(players);
-  const total = players.reduce((a, b) => a + +b.balance, 0);
-  console.log(`Total: ${total}`);
-  const desc = sorted.map((elem, ix) => {
-    const ign = escapeMarkdown(elem.username);
-    const bal = numberWithCommas(elem.balance);
-    return `${ix + 1}. **${ign}**: $${bal}`;
-  });
+  const total = numberWithCommas(
+    players.reduce((a, b) => a + +b.balance, 0).toFixed(2)
+  );
+  const desc = sorted
+    .map((elem, ix) => {
+      const ign = escapeMarkdown(elem.username);
+      const bal = numberWithCommas(elem.balance);
+      return `${ix + 1}. **${ign}**: $${bal}`;
+    })
+    .join('\n');
   return new Discord.MessageEmbed()
     .setTitle(`${name}'s balance`)
     .setDescription(desc + `\n\n**Total**: $${total}`)
@@ -75,6 +78,7 @@ const sortBalances = players => players.sort((a, b) => b.balance - a.balance);
 
 function getBalances (acc, splitMembers) {
   return new Promise((resolve, reject) => {
+    if (splitMembers.length === 0) resolve([]);
     const balance = /(.+)'s Balance: \$(.+)/;
     const makePlayer = ([, username, balance]) => ({
       username,
@@ -99,7 +103,7 @@ function getBalances (acc, splitMembers) {
 function createNotAllianceEmbed () {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-    .setColor('PURPLE')
+    .setColor('RED')
     .setTitle(
       "❌ Either the alliance requested doesn't exist or the user doesn't have an alliance."
     );
@@ -194,6 +198,6 @@ function getAlliancePromise (acc, allianceName) {
 function createHelpEmbed () {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-    .setColor('PURPLE')
+    .setColor('RED')
     .setTitle('>abal [alliance name / username]');
 }

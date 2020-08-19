@@ -4,6 +4,7 @@ const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper');
 module.exports = {
   name: 'balance',
   cooldown: 5,
+  aliases: ['bal'],
   description: "Get's a player's balance.",
   execute (message, args, accounts) {
     const acc = accounts.takeOne();
@@ -26,7 +27,7 @@ module.exports = {
 function createHelpEmbed () {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-    .setColor('PURPLE')
+    .setColor('GREEN')
     .setTitle('>bal [username]');
 }
 
@@ -44,7 +45,6 @@ function renderCommand (bot, ign) {
 
     bot.on('message', msg => {
       const ft = msg.toString();
-      console.log(ft);
       if (regex.balance.test(ft)) {
         const info = createInfo(ft);
         resolve(CreateEmbed(info));
@@ -59,13 +59,13 @@ function renderCommand (bot, ign) {
   function CreateNotBalanceEmbed () {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-      .setColor('PURPLE')
+      .setColor('RED')
       .setTitle("❌ The user either doesn't exist or doesn't have a ballance.");
   }
   function CreateEmbed (info) {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-      .setColor('PURPLE')
+      .setColor('RED')
       .setTitle(`${escapeMarkdown(info.ign)} has $${info.balance}`);
   }
 }
