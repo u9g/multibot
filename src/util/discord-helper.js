@@ -19,9 +19,19 @@ const removeCommas = x => x.replace(/,/g, '');
 const numberWithCommas = x => {
   return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 };
+
+function splitToChunks (array, parts) {
+  const result = [];
+  for (let i = parts; i > 0; i--) {
+    result.push(array.splice(0, Math.ceil(array.length / i)));
+  }
+  return result;
+}
+
 module.exports = {
   allAcountsBusy,
   escapeMarkdown,
   removeCommas,
-  numberWithCommas
+  numberWithCommas,
+  splitToChunks
 };

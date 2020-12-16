@@ -9,18 +9,25 @@ class Account {
       this.bot.chat('/join');
       this.busy = false;
     });
+    this.bot.on('kicked', reason => {
+      console.log(reason);
+      this.relog();
+    });
   }
 
   relog () {
-    this.busy = true;
-    this.bot.end();
-    setTimeout(() => {
-      this.bot = mineflayer.createBot(this.options);
-      this.bot.once('spawn', () => {
-        this.bot.chat('/join');
-        this.busy = false;
-      });
-    }, 5000);
+    return new Promise((resolve, reject) => {
+      this.busy = true;
+      this.bot.end();
+      setTimeout(() => {
+        this.bot = mineflayer.createBot(this.options);
+        this.bot.once('spawn', () => {
+          this.bot.chat('/join');
+          this.busy = false;
+          resolve();
+        });
+      }, 5000);
+    });
   }
 
   setBusy () {
@@ -44,17 +51,21 @@ class Accounts {
   }
 
   takeOne () {
-    const acc = this.accounts.find(x => x.busy === false);
+    const acc = this.accounts.find(x => !x.busy);
     if (acc !== undefined) {
-      acc.busy = true;
+      acc.setBusy();
       return acc;
     } else return null;
+  }
+  
+  take(x){
+    return this.accounts[x];
   }
 
   status () {
     const isBusy = b => (b ? 'is busy.' : 'is not busy.');
     return this.accounts
-      .map((elem, ix) => `${ix}. ${elem.bot.username}: ${isBusy(elem.busy)}`)
+      .map((elem, ix) => `${ix}. ${elem.bot.username || elem.options.username}: ${isBusy(elem.busy)}`)
       .join('\n');
   }
 
@@ -71,6 +82,10 @@ class Accounts {
     const availAccs = this.accounts.filter(x => !x.busy); // accounts ready for mass use
     if (availAccs.length === 0) return null;
     return availAccs.slice(SAFE_ACCOUNTS);
+  }
+
+  relogAll () {
+    return Promise.all(this.accounts.map(x => x.relog()));
   }
 }
 

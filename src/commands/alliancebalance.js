@@ -3,34 +3,47 @@ const {
   allAcountsBusy,
   removeCommas,
   numberWithCommas,
-  escapeMarkdown
+  escapeMarkdown,
+  splitToChunks
 } = require('../util/discord-helper');
 
 module.exports = {
-  name: 'abalance',
+  name: 'abal',
   cooldown: 5,
-  aliases: ['abal'],
+  aliases: ['abalance'],
+  race: true,
   description: "Get's a player's balance.",
   execute (message, args, accounts) {
-    const acc = accounts.takeMany();
-    acc.forEach(x => x.setBusy());
+    return new Promise((resolve, reject) => {
+      const acc = accounts.takeMany();
+      acc.forEach(x => x.setBusy());
 
-    if (acc === null) {
-      return message.channel.send(allAcountsBusy());
-    }
-    if (!args[0]) {
-      return message.channel.send(createHelpEmbed());
-    }
-
-    asyncRunner(acc, args, message).then(embed => {
-      message.channel.send(embed);
-      acc.forEach(acc => acc.done());
+      if (acc === null) {
+        message.channel.send(allAcountsBusy());
+        resolve();
+      }
+      if (!args[0]) {
+        message.channel.send(createHelpEmbed());
+        resolve();
+      }
+      asyncRunner(acc, args, message).then(embed => {
+        message.channel.send(embed);
+        resolve();
+        acc.forEach(acc => acc.done());
+      });
     });
   }
 };
 
+function rejectAfterTimeout (timeout) {
+  return new Promise((resolve, reject) =>
+    setTimeout(() => reject(new Error('Request timed out')), timeout)
+  );
+}
+
 async function asyncRunner (acc, args, message) {
-  const alliance = await tryIslandInfo(acc, 0, args[0]).catch(_ => {
+  const timeNow = new Date(Date.now());
+  const alliance = await getAlliancePromise(acc[0], args[0]).catch(_ => {
     // only goes here if alliance name is undefined
     acc.forEach(x => x.done());
     return message.channel.send(createNotAllianceEmbed());
@@ -41,8 +54,15 @@ async function asyncRunner (acc, args, message) {
   const splitMembers = splitToChunks(alliance.members, acc.length);
   // request balances on alts
   const proms = [];
-  acc.forEach((acc, ix) => {
-    proms.push(getBalances(acc, splitMembers[ix]));
+  acc.forEach((elem, ix) => {
+    const acc = splitMembers[ix];
+    try {
+      proms.push(
+        Promise.race([getBalances(elem, acc), rejectAfterTimeout(2000)])
+      );
+    } catch (err) {
+      console.log(err);
+    }
   });
   const results = await Promise.allSettled(proms);
   // make all arrays into one
@@ -52,10 +72,13 @@ async function asyncRunner (acc, args, message) {
     .forEach(players => allPlayers.push(...players));
   // remove commas
   allPlayers.forEach(x => (x.balance = removeCommas(x.balance)));
-  return makeEmbed(allPlayers, alliance.name);
+  const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
+    .toFixed(2)
+    .toString();
+  return makeEmbed(allPlayers, alliance.name, timePassed);
 }
 
-function makeEmbed (players, name) {
+function makeEmbed (players, name, timePassed) {
   const sorted = sortBalances(players);
   const total = numberWithCommas(
     players.reduce((a, b) => a + +b.balance, 0).toFixed(2)
@@ -67,11 +90,13 @@ function makeEmbed (players, name) {
       return `${ix + 1}. **${ign}**: $${bal}`;
     })
     .join('\n');
+  const timeString = `✔️ in ${timePassed}s`;
   return new Discord.MessageEmbed()
     .setTitle(`${name}'s balance`)
     .setDescription(desc + `\n\n**Total**: $${total}`)
     .setColor('GREEN')
-    .setTimestamp();
+    .setTimestamp()
+    .setFooter(timeString);
 }
 
 const sortBalances = players => players.sort((a, b) => b.balance - a.balance);
@@ -92,7 +117,10 @@ function getBalances (acc, splitMembers) {
       if (balance.test(ft)) {
         const player = makePlayer(ft.match(balance));
         players.push(player);
-        if (players.length === splitMembers.length) resolve(players);
+        if (players.length === splitMembers.length) {
+          resolve(players);
+          acc.bot.removeAllListeners(['message']);
+        }
       }
     });
     splitMembers.forEach((elem, ix) => {
@@ -107,51 +135,6 @@ function createNotAllianceEmbed () {
     .setTitle(
       "❌ Either the alliance requested doesn't exist or the user doesn't have an alliance."
     );
-}
-
-function rejectAfterTimeout (timeout) {
-  return new Promise((resolve, reject) =>
-    setTimeout(() => reject(new Error('Request timed out')), timeout)
-  );
-}
-
-function tryIslandInfo (acc, ix, island) {
-  return new Promise((resolve, reject) => {
-    const firstAcc = acc[ix];
-    raceAllianceName(firstAcc, island)
-      .then(res => resolve(res))
-      .catch(err => {
-        if (err === 'Invalid alliance name.') {
-          reject(err);
-        } else {
-          firstAcc.relog();
-          if (acc.length === ix - 1) {
-            tryIslandInfo(acc, 0, island);
-          } else {
-            tryIslandInfo(acc, ix + 1, island);
-          }
-        }
-      });
-  });
-}
-
-function raceAllianceName (acc, allianceName) {
-  return new Promise((resolve, reject) => {
-    Promise.race([
-      getAlliancePromise(acc, allianceName),
-      rejectAfterTimeout(5000)
-    ])
-      .then(res => resolve(res))
-      .catch(reason => reject(reason.message));
-  });
-}
-
-function splitToChunks (array, parts) {
-  const result = [];
-  for (let i = parts; i > 0; i--) {
-    result.push(array.splice(0, Math.ceil(array.length / i)));
-  }
-  return result;
 }
 
 function getAlliancePromise (acc, allianceName) {
