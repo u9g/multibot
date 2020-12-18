@@ -168,7 +168,7 @@ function renderCommand(bot, page) {
             .toFixed(2)
             .toString();
           const embed = createEmbed(players, page, timePassed);
-          bot.removeAllListeners(['message']);
+          acc.done();
           resolve(embed);
         }
       }

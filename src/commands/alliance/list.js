@@ -29,7 +29,7 @@ function renderCommand(accounts) {
         players.push([name, online, offline]);
       } else if (showingPlayers && !regex.alliance.test(ft)) {
         showingPlayers = false;
-        acc.bot.removeAllListeners(['message']);
+        acc.done();
         resolve(embed(players));
       }
     });
