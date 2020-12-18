@@ -170,7 +170,7 @@ function renderCommand(bot, page) {
             .toFixed(2)
             .toString();
           const embed = createEmbed(players, page, timePassed);
-          acc.done();
+          bot.removeAllListeners();
           resolve(embed);
         }
       }
