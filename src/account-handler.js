@@ -1,7 +1,7 @@
 const mineflayer = require('mineflayer');
 
 class Account {
-  constructor (options) {
+  constructor(options) {
     this.options = options;
     this.bot = mineflayer.createBot(options);
     this.busy = false;
@@ -9,13 +9,13 @@ class Account {
       this.bot.chat('/join');
       this.busy = false;
     });
-    this.bot.on('kicked', reason => {
+    this.bot.on('kicked', (reason) => {
       console.log(reason);
       this.relog();
     });
   }
 
-  relog () {
+  relog() {
     return new Promise((resolve, reject) => {
       this.busy = true;
       this.bot.end();
@@ -30,62 +30,68 @@ class Account {
     });
   }
 
-  setBusy () {
+  setBusy() {
     this.busy = true;
   }
 
-  done () {
+  done() {
+    this.bot.removeAllListeners(['message']);
     this.busy = false;
   }
 }
 
 class Accounts {
-  constructor (logins) {
-    this.accounts = logins.map(login => {
+  constructor(logins) {
+    this.accounts = logins.map((login) => {
       return new Account({
         username: login[0],
         password: login[1],
-        host: 'cosmicsky.com'
+        host: 'cosmicsky.com',
       });
     });
   }
 
-  takeOne () {
-    const acc = this.accounts.find(x => !x.busy);
+  takeOne() {
+    const acc = this.accounts.find((x) => !x.busy);
     if (acc !== undefined) {
       acc.setBusy();
       return acc;
     } else return null;
   }
-  
-  take(x){
+
+  take(x) {
     return this.accounts[x];
   }
 
-  status () {
-    const isBusy = b => (b ? 'is busy.' : 'is not busy.');
+  status() {
+    const isBusy = (b) => (b ? 'is busy.' : 'is not busy.');
     return this.accounts
-      .map((elem, ix) => `${ix}. ${elem.bot.username || elem.options.username}: ${isBusy(elem.busy)}`)
+      .map(
+        (elem, ix) =>
+          `${ix}. ${elem.bot.username || elem.options.username}: ${isBusy(
+            elem.busy
+          )}`
+      )
       .join('\n');
   }
 
-  toggleBusy (ix) {
+  toggleBusy(ix) {
     this.accounts[ix].busy = !this.accounts[ix].busy;
   }
 
-  relogAccount (ix) {
+  relogAccount(ix) {
     this.accounts[ix].relog();
   }
 
-  takeMany () {
+  takeMany() {
     const SAFE_ACCOUNTS = 1; // # of accounts not used during mass account actions
-    const availAccs = this.accounts.filter(x => !x.busy); // accounts ready for mass use
+    const availAccs = this.accounts.filter((x) => !x.busy); // accounts ready for mass use
     if (availAccs.length === 0) return null;
     return availAccs.slice(SAFE_ACCOUNTS);
   }
 
-  relogAll () {
-    return Promise.all(this.accounts.map(x => x.relog()));
+  relogAll() {
+    return Promise.all(this.accounts.map((x) => x.relog()));
   }
 }
 

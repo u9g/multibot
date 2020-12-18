@@ -192,11 +192,10 @@ async function getBossInfo(bossName, page) {
 
 const invalidBossEmbed = () =>
   new Discord.MessageEmbed()
-    .setTitle(
-      'React with the emoji of the boss you would like information about.'
-    )
+    .setTitle('Previously Killed Bosses')
     .setDescription(
-      `${emojis[0].toString()}: Bandit King` +
+      'React with the emoji of the boss you would like information about.\n' +
+        `${emojis[0].toString()}: Bandit King` +
         '\n' +
         `${emojis[1].toString()}: Plague Doctor` +
         '\n' +
