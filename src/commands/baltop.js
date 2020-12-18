@@ -8,8 +8,9 @@ const {
 } = require('../util/discord-helper');
 
 module.exports = {
-  name: 'istop',
+  name: 'baltop',
   cooldown: 5,
+  aliases: ['balancetop'],
   race: true,
   description: 'Gets either the top 15 players or the given page of level top.',
   execute(message, args, accounts) {
@@ -19,7 +20,7 @@ module.exports = {
     const emojiX = '❌';
     const reactionArrow = [emojiPrevious, emojiNext, emojiX];
     const time = 60000 * 2; // time limit: 2 min
-    const boundaries = [1, 20];
+    const boundaries = [1, 10];
 
     function filter(reaction, user) {
       return !user.bot && reactionArrow.includes(reaction.emoji.name); // check if the emoji is inside the list of emojis, and if the user is not a bot
@@ -147,24 +148,22 @@ function getFirstPage(bot, i) {
 function renderCommand(bot, page) {
   return new Promise((resolve, reject) => {
     const regex = {
-      start: /Top Player Islands \(\d+\/\d+\)/,
-      user: /\d+. (?:\[.+] )?(.+) \(Level (\d+)\)/,
+      user: /\d+\. (.+)\: \$(.+)/,
+      start: /Top Balances \(\d+\/\d+\)/,
     };
 
     const timeNow = new Date(Date.now());
     const players = [];
-    let showingPeople = false;
-    bot.chat(`/is top ${page}`);
-
+    let listening = false;
+    bot.chat(`/baltop ${page}`);
     bot.on('message', (msg) => {
       const ft = msg.toString();
-      if (regex.start.test(ft)) {
-        showingPeople = true;
-      } else if (showingPeople && regex.user.test(ft)) {
-        const [, ign, level] = ft.match(regex.user);
-        players.push([ign, level]);
+      if (regex.start.test(ft)) listening = true;
+      else if (listening && regex.user.test(ft)) {
+        const [, ign, money] = ft.match(regex.user);
+        players.push([ign, money]);
         if (players.length === 15) {
-          showingPeople = false;
+          listening = false;
           const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
             .toFixed(2)
             .toString();
@@ -177,13 +176,11 @@ function renderCommand(bot, page) {
   });
 }
 
-function createEmbed(info, page, timePassed) {
-  const desc = createDescription(info, page);
+function createEmbed(players, page, timePassed) {
+  const desc = createDescription(players);
   const timeString = `✔️ in ${timePassed}s`;
   const title =
-    page > 1
-      ? `Top Player Islands (${page} / 20)`
-      : 'Top Player Islands (1 / 20)';
+    page > 1 ? `Top Balances (${page} / 10)` : 'Top Balances (1 / 10)';
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setTitle(title)
@@ -193,15 +190,11 @@ function createEmbed(info, page, timePassed) {
     .setTimestamp();
 }
 
-const createDescription = (players, page) => {
-  return players
-    .map((user, ix) => {
-      let [ign, lvl] = user;
-      ign = escapeMarkdown(ign);
-      if (page == 1) {
-        page = 0;
-      }
-      return `${15 * page + ix + 1}. **${ign}** has island level **${lvl}**`;
+const createDescription = (players) =>
+  players
+    .map((info, ix) => {
+      const ign = escapeMarkdown(info[0]);
+      const balance = info[1];
+      return `${ix + 1}. **${ign}**: $${balance}`;
     })
     .join('\n');
-};
