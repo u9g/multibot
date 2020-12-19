@@ -30,7 +30,6 @@ module.exports = {
   execute(message, args, accounts) {
     //make emojis arr
     emojis = generateEmojis(message);
-    emojis.push(emojiX);
     //send start message
     sendList(message.channel, message.author);
     //message.channel.send(embed);
@@ -38,7 +37,11 @@ module.exports = {
 };
 /* FROM AFTER NOW ON home page ONLY */
 function filter(reaction, user) {
-  return !user.bot && emojis.map((x) => x.name).includes(reaction.emoji.name); // check if the emoji is inside the list of emojis, and if the user is not a bot
+  return (
+    !user.bot &&
+    (emojis.map((x) => x.name).includes(reaction.emoji.name) ||
+      emojiX === reaction.emoji.name)
+  ); // check if the emoji is inside the list of emojis, and if the user is not a bot
 }
 
 function onCollect(emoji, message) {
@@ -90,7 +93,7 @@ function sendList(channel, author) {
     .then((msgReaction) => msgReaction.message.react(emojis[1])) //plague
     .then((msgReaction) => msgReaction.message.react(emojis[2])) //yijki
     .then((msgReaction) => msgReaction.message.react(emojis[3])) //nightmare
-    .then((msgReaction) => msgReaction.message.react(emojis[4])) //x
+    .then((msgReaction) => msgReaction.message.react(emojiX)) //x
     .then((msgReaction) => createCollectorMessage(msgReaction.message, author));
 }
 /* FROM BEFORE NOW ON home page ONLY */
@@ -130,7 +133,7 @@ function recreateHomePage(message, author) {
     .then((msgReaction) => msgReaction.message.react(emojis[1])) //plague
     .then((msgReaction) => msgReaction.message.react(emojis[2])) //yijki
     .then((msgReaction) => msgReaction.message.react(emojis[3])) //nightmare
-    .then((msgReaction) => msgReaction.message.react(emojis[4])) //x
+    .then((msgReaction) => msgReaction.message.react(emojiX)) //x
     .then((msgReaction) => createCollectorMessage(msgReaction.message, author));
 }
 /* FROM BEFORE NOW ON subpage ONLY */
