@@ -3,10 +3,11 @@ const { allAcountsBusy, escapeMarkdown } = require('../../util/discord-helper');
 
 const regex = {
   allianceName: /-+ \[ (.+) \] -+/,
-  onlineMembers: /Online Members: (.+)/,
-  offlineMembers: /Offline Members: (.+)/,
-  allies: /Allies: (.+)/,
-  truces: /Truces: (.+)/,
+  onlineMembers: /Online Members: (.+)?/,
+  offlineMembers: /Offline Members: (.+)?/,
+  allies: /Allies: (.+)?/,
+  truces: /Truces: (.+)?/,
+  notAlliance: /\(\!\) Unable to find alliance from '.+'/,
 };
 
 function renderCommand(accounts, name) {
@@ -22,6 +23,7 @@ function renderCommand(accounts, name) {
 
     bot.on('message', (msg) => {
       const ft = msg.toString();
+      console.log(ft);
       if (regex.allianceName.test(ft)) {
         alliance.name = ft.match(regex.allianceName)[1];
       } else if (regex.onlineMembers.test(ft)) {
@@ -34,13 +36,20 @@ function renderCommand(accounts, name) {
         alliance.allies = makeList(ft, regex.allies);
         acc.done();
         resolve(embed(alliance));
+      } else if (
+        regex.notAlliance.test(ft) ||
+        ft.trim() === 'Usage: /alliance info <alliance/player>'
+      ) {
+        acc.done();
+        resolve(notAllianceEmbed);
       }
     });
   });
 }
 
 function makeList(srcString, regex) {
-  return srcString.match(regex)[1].split(', ');
+  const toReturn = srcString.match(regex)[1];
+  return toReturn ? toReturn.split(', ') : '';
 }
 
 const embed = (alliance) => {
@@ -55,10 +64,17 @@ const embed = (alliance) => {
     makeString(alliance.truces);
   return new Discord.MessageEmbed()
     .setTitle(`${alliance.name} Info`)
+    .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setDescription(desc)
     .setColor('AQUA')
     .setTimestamp();
 };
+
+const notAllianceEmbed = new Discord.MessageEmbed()
+  .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
+  .setColor('AQUA')
+  .setTitle("That alliance doesn't exist.")
+  .setTimestamp();
 
 function makeString(list) {
   let string = '';

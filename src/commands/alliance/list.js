@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const {} = require('../../util/discord-helper');
+const { allAcountsBusy } = require('../../util/discord-helper');
 
 const regex = {
   startMessage: /-.+Alliance List \(\d+ \/ \d+\) -+/,
@@ -29,7 +29,8 @@ function renderCommand(accounts) {
         players.push([name, online, offline]);
       } else if (showingPlayers && !regex.alliance.test(ft)) {
         showingPlayers = false;
-        acc.bot.removeAllListeners(['message']);
+        bot.removeAllListeners(['message']);
+        acc.done();
         resolve(embed(players));
       }
     });
@@ -44,6 +45,7 @@ const embed = (players) =>
         .map((elem, ix) => `(\`${elem[1]}/${elem[2]}\`) **${elem[0]}**`)
         .join('\n')
     )
-    .setTimestamp();
+    .setTimestamp()
+    .setColor('AQUA');
 
 module.exports = { renderCommand };
