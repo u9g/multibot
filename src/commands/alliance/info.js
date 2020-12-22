@@ -23,7 +23,6 @@ function renderCommand(accounts, name) {
 
     bot.on('message', (msg) => {
       const ft = msg.toString();
-      console.log(ft);
       if (regex.allianceName.test(ft)) {
         alliance.name = ft.match(regex.allianceName)[1];
       } else if (regex.onlineMembers.test(ft)) {
@@ -35,7 +34,7 @@ function renderCommand(accounts, name) {
       } else if (regex.allies.test(ft)) {
         alliance.allies = makeList(ft, regex.allies);
         acc.done();
-        resolve(embed(alliance));
+        resolve(makeEmbed(alliance));
       } else if (
         regex.notAlliance.test(ft) ||
         ft.trim() === 'Usage: /alliance info <alliance/player>'
@@ -52,7 +51,7 @@ function makeList(srcString, regex) {
   return toReturn ? toReturn.split(', ') : '';
 }
 
-const embed = (alliance) => {
+function makeEmbed(alliance) {
   const desc =
     '**Online Members**: ' +
     makeString(alliance.online) +
@@ -62,28 +61,24 @@ const embed = (alliance) => {
     makeString(alliance.allies) +
     '\n\n**Truces**: ' +
     makeString(alliance.truces);
+
   return new Discord.MessageEmbed()
-    .setTitle(`${alliance.name} Info`)
+    .setTitle(`${alliance.name}`)
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setDescription(desc)
     .setColor('AQUA')
     .setTimestamp();
-};
+}
 
 const notAllianceEmbed = new Discord.MessageEmbed()
   .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
   .setColor('AQUA')
-  .setTitle("That alliance doesn't exist.")
+  .setTitle(
+    "That alliance doesn't exist or that user doesn't have an alliance."
+  )
   .setTimestamp();
 
-function makeString(list) {
-  let string = '';
-  if (list && list.length >= 1) {
-    string = list.map((x) => escapeMarkdown(x)).join(', ');
-  } else {
-    string = '';
-  }
-  return string;
-}
+const makeString = (list) =>
+  list ? list.map((x) => escapeMarkdown(x)).join(', ') : '';
 
 module.exports = { renderCommand };
