@@ -26,13 +26,10 @@ function splitToChunks(array, parts) {
   return result;
 }
 
-const fetchEmoji = (name, client) => {
-  let guild = client.guilds.cache.find(
-    (guild) => guild.id === '661701980036661308'
-  );
-  const emoji = guild.emojis.cache.find((emoji) => {
-    return emoji.name === name;
-  });
+const fetchEmoji = (emojiWanted, client) => {
+  const myEmojiServer = '661701980036661308';
+  const guild = client.guilds.cache.find((guild) => guild.id === myEmojiServer);
+  const emoji = guild.emojis.cache.find((emoji) => emoji.name === emojiWanted);
   return emoji;
 };
 

@@ -52,7 +52,6 @@ async function asyncRunner(acc, args, message) {
     alliance = await getAlliancePromise(acc[0], args[0]);
   } catch (e) {
     // only goes here if alliance name is undefined which would happen if there are no accounts
-    // acc.forEach((x) => x.done());
     return allAcountsBusy;
   }
   const approxTime = Math.ceil(alliance.members.length / acc.length) * 100;
