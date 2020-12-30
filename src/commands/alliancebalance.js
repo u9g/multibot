@@ -4,7 +4,7 @@ const {
   removeCommas,
   numberWithCommas,
   escapeMarkdown,
-  splitToChunks
+  splitToChunks,
 } = require('../util/discord-helper');
 
 module.exports = {
@@ -13,10 +13,10 @@ module.exports = {
   aliases: ['abalance'],
   race: true,
   description: "Get's a player's balance.",
-  execute (message, args, accounts) {
+  execute(message, args, accounts) {
     return new Promise((resolve, reject) => {
       const acc = accounts.takeMany();
-      acc.forEach(x => x.setBusy());
+      acc.forEach((x) => x.setBusy());
 
       if (acc === null) {
         message.channel.send(allAcountsBusy());
@@ -26,28 +26,35 @@ module.exports = {
         message.channel.send(createHelpEmbed());
         resolve();
       }
-      asyncRunner(acc, args, message).then(embed => {
-        message.channel.send(embed);
-        resolve();
-        acc.forEach(acc => acc.done());
+      asyncRunner(acc, args, message).then((embed) => {
+        if (embed !== null) {
+          message.channel.send(embed);
+          resolve();
+          acc.forEach((acc) => acc.done());
+        } else {
+          resolve();
+        }
       });
     });
-  }
+  },
 };
 
-function rejectAfterTimeout (timeout) {
+function rejectAfterTimeout(timeout) {
   return new Promise((resolve, reject) =>
     setTimeout(() => reject(new Error('Request timed out')), timeout)
   );
 }
 
-async function asyncRunner (acc, args, message) {
+async function asyncRunner(acc, args, message) {
   const timeNow = new Date(Date.now());
-  const alliance = await getAlliancePromise(acc[0], args[0]).catch(_ => {
-    // only goes here if alliance name is undefined
-    acc.forEach(x => x.done());
-    return message.channel.send(createNotAllianceEmbed());
-  });
+  let alliance;
+  try {
+    alliance = await getAlliancePromise(acc[0], args[0]);
+  } catch (e) {
+    // only goes here if alliance name is undefined which would happen if there are no accounts
+    // acc.forEach((x) => x.done());
+    return allAcountsBusy;
+  }
   const approxTime = Math.ceil(alliance.members.length / acc.length) * 100;
   message.channel.send(`Please wait ${approxTime / 1000} seconds.`);
   // split the members into an array of members for each account
@@ -68,17 +75,17 @@ async function asyncRunner (acc, args, message) {
   // make all arrays into one
   const allPlayers = [];
   results
-    .map(promiseResults => promiseResults.value)
-    .forEach(players => allPlayers.push(...players));
+    .map((promiseResults) => promiseResults.value)
+    .forEach((players) => allPlayers.push(...players));
   // remove commas
-  allPlayers.forEach(x => (x.balance = removeCommas(x.balance)));
+  allPlayers.forEach((x) => (x.balance = removeCommas(x.balance)));
   const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
     .toFixed(2)
     .toString();
   return makeEmbed(allPlayers, alliance.name, timePassed);
 }
 
-function makeEmbed (players, name, timePassed) {
+function makeEmbed(players, name, timePassed) {
   const sorted = sortBalances(players);
   const total = numberWithCommas(
     players.reduce((a, b) => a + +b.balance, 0).toFixed(2)
@@ -99,20 +106,20 @@ function makeEmbed (players, name, timePassed) {
     .setFooter(timeString);
 }
 
-const sortBalances = players => players.sort((a, b) => b.balance - a.balance);
+const sortBalances = (players) => players.sort((a, b) => b.balance - a.balance);
 
-function getBalances (acc, splitMembers) {
+function getBalances(acc, splitMembers) {
   return new Promise((resolve, reject) => {
     if (splitMembers.length === 0) resolve([]);
     const balance = /(.+)'s Balance: \$(.+)/;
     const makePlayer = ([, username, balance]) => ({
       username,
-      balance
+      balance,
     });
 
     const players = [];
 
-    acc.bot.on('message', msg => {
+    acc.bot.on('message', (msg) => {
       const ft = msg.toString();
       if (balance.test(ft)) {
         const player = makePlayer(ft.match(balance));
@@ -128,7 +135,7 @@ function getBalances (acc, splitMembers) {
     });
   });
 }
-function createNotAllianceEmbed () {
+function createNotAllianceEmbed() {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setColor('RED')
@@ -137,18 +144,18 @@ function createNotAllianceEmbed () {
     );
 }
 
-function getAlliancePromise (acc, allianceName) {
-  const getAllianceName = fullText => fullText.match(regex.allianceName)[1];
+function getAlliancePromise(acc, allianceName) {
+  const getAllianceName = (fullText) => fullText.match(regex.allianceName)[1];
   const regex = {
     members: /.+ Members: (.+)/,
-    allianceName: /----------- \[ (.+) \] -----------/
+    allianceName: /----------- \[ (.+) \] -----------/,
   };
 
   let showingAllianceMembers = false;
   const alliance = {};
 
   return new Promise((resolve, reject) => {
-    acc.bot.on('message', msg => {
+    acc.bot.on('message', (msg) => {
       const ft = msg.toString();
       if (
         ft.startsWith('(!) Unable to find alliance from') ||
@@ -178,7 +185,7 @@ function getAlliancePromise (acc, allianceName) {
   });
 }
 
-function createHelpEmbed () {
+function createHelpEmbed() {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setColor('RED')

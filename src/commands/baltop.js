@@ -128,7 +128,7 @@ module.exports = {
       const acc = accounts.takeOne();
       //if there is no account
       if (acc === null) {
-        message.channel.send(allAcountsBusy());
+        message.channel.send(allAcountsBusy);
         resolve();
       } else if (isNaN(args[1])) {
         sendList(message.channel, message.author, acc, 1);

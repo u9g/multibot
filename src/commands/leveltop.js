@@ -10,7 +10,7 @@ const {
 module.exports = {
   name: 'lvltop',
   cooldown: 5,
-  aliases: ['leveltop'],
+  aliases: ['leveltop', 'roletop'],
   race: true,
   description: 'Gets either the top 15 players or the given page of level top.',
   execute(message, args, accounts) {
@@ -128,7 +128,7 @@ module.exports = {
       const acc = accounts.takeOne();
       //if there is no account
       if (acc === null) {
-        message.channel.send(allAcountsBusy());
+        message.channel.send(allAcountsBusy);
         resolve();
       } else if (isNaN(args[1])) {
         sendList(message.channel, message.author, acc, 1);

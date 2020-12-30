@@ -11,7 +11,10 @@ class Account {
     });
     this.bot.on('kicked', (reason) => {
       console.log(reason);
-      this.relog();
+      setTimeout(() => {
+        //gave a timeout to maybe fix crash on reboot
+        this.relog();
+      }, 3000);
     });
   }
 

@@ -10,7 +10,7 @@ const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper');
 //     const acc = accounts.takeOne();
 
 //     if (acc === null) {
-//       return message.channel.send(allAcountsBusy());
+//       return message.channel.send(allAcountsBusy;
 //     }
 //     if (!args[0]) {
 //       return message.channel.send(createHelpEmbed());
@@ -24,26 +24,26 @@ const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper');
 //   }
 // };
 
-function createHelpEmbed () {
+function createHelpEmbed() {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setColor('GREEN')
     .setTitle('>bal [username]');
 }
 
-function renderCommand (bot, ign) {
+function renderCommand(bot, ign) {
   return new Promise((resolve, reject) => {
     const regex = {
       balance: /(.+)'s Balance: \$(.+)/,
-      playerNotFound: /\(!\) Unable to find online player .+!/
+      playerNotFound: /\(!\) Unable to find online player .+!/,
     };
 
-    const createInfo = ft => ({
+    const createInfo = (ft) => ({
       ign: ft.match(regex.balance)[1],
-      balance: ft.match(regex.balance)[2]
+      balance: ft.match(regex.balance)[2],
     });
 
-    bot.on('message', msg => {
+    bot.on('message', (msg) => {
       const ft = msg.toString();
       if (regex.balance.test(ft)) {
         const info = createInfo(ft);
@@ -56,13 +56,13 @@ function renderCommand (bot, ign) {
     bot.chat(`/bal ${ign}`);
   });
 
-  function CreateNotBalanceEmbed () {
+  function CreateNotBalanceEmbed() {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
       .setColor('RED')
       .setTitle("❌ The user either doesn't exist or doesn't have a ballance.");
   }
-  function CreateEmbed (info) {
+  function CreateEmbed(info) {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
       .setColor('RED')

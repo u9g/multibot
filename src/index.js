@@ -7,10 +7,9 @@ const prefix = process.env.DISCORD_PREFIX;
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 // import commands
-fs
-  .readdirSync('./commands')
-  .filter(file => file.endsWith('.js'))
-  .forEach(file => {
+fs.readdirSync('./commands')
+  .filter((file) => file.endsWith('.js'))
+  .forEach((file) => {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
   });
@@ -24,11 +23,11 @@ client.once('ready', () => {
   console.log('Ready!');
 });
 
-process.on('unhandledRejection', error =>
+process.on('unhandledRejection', (error) =>
   console.error('Uncaught Promise Rejection', error)
 );
 
-client.on('message', message => {
+client.on('message', (message) => {
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -38,7 +37,7 @@ client.on('message', message => {
   const command =
     client.commands.get(commandName) ||
     client.commands.find(
-      cmd => cmd.aliases && cmd.aliases.includes(commandName)
+      (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
     );
 
   if (!command) return;
@@ -67,28 +66,32 @@ client.on('message', message => {
     }
   }
 
-  const rejectAfterTimeout = timeout => {
+  const rejectAfterTimeout = (timeout) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => reject(new Error('Request timed out')), timeout);
     });
   };
   if (command.race) {
-    Promise.race([
-      runCommand(command, message, args),
-      rejectAfterTimeout(5000)
-    ]).catch(reason => {
-      console.log("A command just failed that is supposed to be raced because: ");
+    try {
+      Promise.race([
+        runCommand(command, message, args),
+        rejectAfterTimeout(5000),
+      ]);
+    } catch (reason) {
+      console.log(
+        'A command just failed that is supposed to be raced because: '
+      );
       console.log(reason);
       message.channel.send(botRestarting);
-      accounts.relogAll().then(_ => {
+      accounts.relogAll().then((_) => {
         console.log('restarrting');
         runCommand(command, message, args);
       });
-    });
+    }
   } else runCommand(command, message, args);
 });
 
-function runCommand (command, message, args) {
+function runCommand(command, message, args) {
   try {
     command.execute(message, args, accounts);
   } catch (error) {

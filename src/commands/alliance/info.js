@@ -14,7 +14,7 @@ function renderCommand(accounts, name) {
   return new Promise((resolve, reject) => {
     const acc = accounts.takeOne();
     if (acc === null) {
-      resolve(allAcountsBusy());
+      resolve(allAcountsBusy);
     }
     const bot = acc.bot;
     bot.chat('/a who ' + name);
