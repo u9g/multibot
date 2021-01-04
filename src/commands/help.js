@@ -1,6 +1,6 @@
-require('dotenv').config();
-const prefix = process.env.DISCORD_PREFIX;
-const { MessageEmbed } = require('discord.js');
+require('dotenv').config()
+const prefix = process.env.DISCORD_PREFIX
+const { MessageEmbed } = require('discord.js')
 
 // module.exports = {
 //   name: 'help',
@@ -46,24 +46,24 @@ const { MessageEmbed } = require('discord.js');
 // };
 
 function renderSpecificHelpCommand (command) {
-  const string = [];
-  string.push(`**Name:** ${command.name}`);
+  const string = []
+  string.push(`**Name:** ${command.name}`)
 
   if (command.aliases) {
-    string.push(`**Aliases:** ${command.aliases.join(', ')}`);
+    string.push(`**Aliases:** ${command.aliases.join(', ')}`)
   }
   if (command.description) {
-    string.push(`**Description:** ${command.description}`);
+    string.push(`**Description:** ${command.description}`)
   }
   if (command.usage) {
-    string.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+    string.push(`**Usage:** ${prefix}${command.name} ${command.usage}`)
   }
 
-  string.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+  string.push(`**Cooldown:** ${command.cooldown || 3} second(s)`)
   return new MessageEmbed()
     .setTitle(`Information about ${prefix}${command.name}`)
     .setDescription(string.join('\n'))
-    .setColor('GREEN');
+    .setColor('GREEN')
 }
 
 function renderGeneralHelpCommand (commands) {
@@ -73,12 +73,12 @@ function renderGeneralHelpCommand (commands) {
         .map(cmd => `**${prefix}${cmd.name}**: ${cmd.description}`)
         .join('\n') +
       `\n\nYou can send **${prefix}help [command name]** to get info on a specific command!`
-    );
-  };
+    )
+  }
   return new MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setDescription(desc(commands))
     .setTitle("Here's a list of all my commands:")
     .setTimestamp()
-    .setColor('PURPLE');
+    .setColor('PURPLE')
 }

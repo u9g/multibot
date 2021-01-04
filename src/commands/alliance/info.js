@@ -1,5 +1,5 @@
-const Discord = require('discord.js');
-const { allAcountsBusy, escapeMarkdown } = require('../../util/discord-helper');
+const Discord = require('discord.js')
+const { allAcountsBusy, escapeMarkdown } = require('../../util/discord-helper')
 
 const regex = {
   allianceName: /-+ \[ (.+) \] -+/,
@@ -7,51 +7,51 @@ const regex = {
   offlineMembers: /Offline Members: (.+)?/,
   allies: /Allies: (.+)?/,
   truces: /Truces: (.+)?/,
-  notAlliance: /\(\!\) Unable to find alliance from '.+'/,
-};
+  notAlliance: /\(\!\) Unable to find alliance from '.+'/
+}
 
-function renderCommand(accounts, name) {
+function renderCommand (accounts, name) {
   return new Promise((resolve, reject) => {
-    const acc = accounts.takeOne();
+    const acc = accounts.takeOne()
     if (acc === null) {
-      resolve(allAcountsBusy);
+      resolve(allAcountsBusy)
     }
-    const bot = acc.bot;
-    bot.chat('/a who ' + name);
+    const bot = acc.bot
+    bot.chat('/a who ' + name)
 
-    const alliance = {};
+    const alliance = {}
 
     bot.on('message', (msg) => {
-      const ft = msg.toString();
+      const ft = msg.toString()
       if (regex.allianceName.test(ft)) {
-        alliance.name = ft.match(regex.allianceName)[1];
+        alliance.name = ft.match(regex.allianceName)[1]
       } else if (regex.onlineMembers.test(ft)) {
-        alliance.online = makeList(ft, regex.onlineMembers);
+        alliance.online = makeList(ft, regex.onlineMembers)
       } else if (regex.offlineMembers.test(ft)) {
-        alliance.offline = makeList(ft, regex.offlineMembers);
+        alliance.offline = makeList(ft, regex.offlineMembers)
       } else if (regex.truces.test(ft)) {
-        alliance.truces = makeList(ft, regex.truces);
+        alliance.truces = makeList(ft, regex.truces)
       } else if (regex.allies.test(ft)) {
-        alliance.allies = makeList(ft, regex.allies);
-        acc.done();
-        resolve(makeEmbed(alliance));
+        alliance.allies = makeList(ft, regex.allies)
+        acc.done()
+        resolve(makeEmbed(alliance))
       } else if (
         regex.notAlliance.test(ft) ||
         ft.trim() === 'Usage: /alliance info <alliance/player>'
       ) {
-        acc.done();
-        resolve(notAllianceEmbed);
+        acc.done()
+        resolve(notAllianceEmbed)
       }
-    });
-  });
+    })
+  })
 }
 
-function makeList(srcString, regex) {
-  const toReturn = srcString.match(regex)[1];
-  return toReturn ? toReturn.split(', ') : '';
+function makeList (srcString, regex) {
+  const toReturn = srcString.match(regex)[1]
+  return toReturn ? toReturn.split(', ') : ''
 }
 
-function makeEmbed(alliance) {
+function makeEmbed (alliance) {
   const desc =
     '**Online Members**: ' +
     makeString(alliance.online) +
@@ -60,14 +60,14 @@ function makeEmbed(alliance) {
     '\n\n**Allies**: ' +
     makeString(alliance.allies) +
     '\n\n**Truces**: ' +
-    makeString(alliance.truces);
+    makeString(alliance.truces)
 
   return new Discord.MessageEmbed()
     .setTitle(`${alliance.name}`)
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setDescription(desc)
     .setColor('AQUA')
-    .setTimestamp();
+    .setTimestamp()
 }
 
 const notAllianceEmbed = new Discord.MessageEmbed()
@@ -76,9 +76,9 @@ const notAllianceEmbed = new Discord.MessageEmbed()
   .setTitle(
     "That alliance doesn't exist or that user doesn't have an alliance."
   )
-  .setTimestamp();
+  .setTimestamp()
 
 const makeString = (list) =>
-  list ? list.map((x) => escapeMarkdown(x)).join(', ') : '';
+  list ? list.map((x) => escapeMarkdown(x)).join(', ') : ''
 
-module.exports = { renderCommand };
+module.exports = { renderCommand }

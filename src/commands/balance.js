@@ -1,5 +1,5 @@
-const Discord = require('discord.js');
-const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper');
+const Discord = require('discord.js')
+const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper')
 
 // module.exports = {
 //   name: 'balance',
@@ -24,48 +24,48 @@ const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper');
 //   }
 // };
 
-function createHelpEmbed() {
+function createHelpEmbed () {
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setColor('GREEN')
-    .setTitle('>bal [username]');
+    .setTitle('>bal [username]')
 }
 
-function renderCommand(bot, ign) {
+function renderCommand (bot, ign) {
   return new Promise((resolve, reject) => {
     const regex = {
       balance: /(.+)'s Balance: \$(.+)/,
-      playerNotFound: /\(!\) Unable to find online player .+!/,
-    };
+      playerNotFound: /\(!\) Unable to find online player .+!/
+    }
 
     const createInfo = (ft) => ({
       ign: ft.match(regex.balance)[1],
-      balance: ft.match(regex.balance)[2],
-    });
+      balance: ft.match(regex.balance)[2]
+    })
 
     bot.on('message', (msg) => {
-      const ft = msg.toString();
+      const ft = msg.toString()
       if (regex.balance.test(ft)) {
-        const info = createInfo(ft);
-        resolve(CreateEmbed(info));
+        const info = createInfo(ft)
+        resolve(CreateEmbed(info))
       } else if (regex.playerNotFound.test(ft)) {
-        bot.removeAllListeners(['message']);
-        resolve(CreateNotBalanceEmbed());
+        bot.removeAllListeners(['message'])
+        resolve(CreateNotBalanceEmbed())
       }
-    });
-    bot.chat(`/bal ${ign}`);
-  });
+    })
+    bot.chat(`/bal ${ign}`)
+  })
 
-  function CreateNotBalanceEmbed() {
+  function CreateNotBalanceEmbed () {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
       .setColor('RED')
-      .setTitle("❌ The user either doesn't exist or doesn't have a ballance.");
+      .setTitle("❌ The user either doesn't exist or doesn't have a ballance.")
   }
-  function CreateEmbed(info) {
+  function CreateEmbed (info) {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
       .setColor('RED')
-      .setTitle(`${escapeMarkdown(info.ign)} has $${info.balance}`);
+      .setTitle(`${escapeMarkdown(info.ign)} has $${info.balance}`)
   }
 }
