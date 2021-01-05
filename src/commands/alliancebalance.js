@@ -16,61 +16,48 @@ module.exports = {
   execute (message, args, accounts) {
     return new Promise((resolve, reject) => {
       const acc = accounts.takeMany()
+
       acc.forEach((x) => x.setBusy())
 
       if (acc === null) {
-        message.channel.send(allAcountsBusy())
-        resolve()
+        message.channel.send(allAcountsBusy)
+        resolve('allAcountsBusy')
       }
       if (!args[0]) {
-        message.channel.send(createHelpEmbed())
-        resolve()
+        message.channel.send(helpEmbed)
+        resolve('helpEmbed')
       }
 
       asyncRunner(acc, args, message).then((embed) => {
-        if (embed !== null) {
-          message.channel.send(embed)
-          resolve()
-          acc.forEach((acc) => acc.done())
-        } else {
-          resolve()
-        }
+        message.channel.send(embed)
+        resolve('actualembed')
+        acc.forEach((acc) => acc.done())
       })
     })
   }
 }
 
-function rejectAfterTimeout (timeout) {
-  return new Promise((resolve, reject) =>
-    setTimeout(() => reject(new Error('Request timed out')), timeout)
-  )
-}
-
 async function asyncRunner (acc, args, message) {
+  // could be username of a member OR the alliance's name
+  const [allianceIdentifier] = args
+  // start timer for execution time
   const timeNow = new Date(Date.now())
+  // get alliance from user/alliance name
   let alliance
-  try {
-    alliance = await getAlliancePromise(acc[0], args[0])
+  try { // catches invalid alliances
+    alliance = await getAlliancePromise(acc[0], allianceIdentifier)
   } catch (e) {
-    // only goes here if alliance name is undefined which would happen if there are no accounts
-    return allAcountsBusy
+    // if the alliance isn't valid, return the invalid embed
+    return notAllianceEmbed
   }
-  const approxTime = Math.ceil(alliance.members.length / acc.length) * 100
-  message.channel.send(`Please wait ${approxTime / 1000} seconds.`)
+  // alliance name was valid
+  // const approxTime = Math.ceil(alliance.members.length / acc.length) * 100
+  // send a wait message
+  // message.channel.send(`Please wait ${approxTime / 1000} seconds.`)
   // split the members into an array of members for each account
   const splitMembers = splitToChunks(alliance.members, acc.length)
-  // request balances on alts
-  const proms = []
-  acc.forEach((elem, ix) => {
-    const acc = splitMembers[ix]
-    try {
-      proms.push(
-        Promise.race([getBalances(elem, acc), rejectAfterTimeout(2000)])
-      )
-    } catch (err) {
-      console.log(err)
-    }
-  })
+  // map the alts to their set of users to check balances on
+  const proms = acc.map((elem, ix) => getBalances(elem, splitMembers[ix]))
   const results = await Promise.allSettled(proms)
   // make all arrays into one
   const allPlayers = []
@@ -135,14 +122,12 @@ function getBalances (acc, splitMembers) {
     })
   })
 }
-function createNotAllianceEmbed () {
-  return new Discord.MessageEmbed()
-    .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-    .setColor('RED')
-    .setTitle(
-      "❌ Either the alliance requested doesn't exist or the user doesn't have an alliance."
-    )
-}
+const notAllianceEmbed = new Discord.MessageEmbed()
+  .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
+  .setColor('RED')
+  .setTitle(
+    "❌ Either the alliance requested doesn't exist or the user doesn't have an alliance."
+  )
 
 function getAlliancePromise (acc, allianceName) {
   const getAllianceName = (fullText) => fullText.match(regex.allianceName)[1]
@@ -185,9 +170,7 @@ function getAlliancePromise (acc, allianceName) {
   })
 }
 
-function createHelpEmbed () {
-  return new Discord.MessageEmbed()
-    .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-    .setColor('RED')
-    .setTitle('>abal [alliance name / username]')
-}
+const helpEmbed = new Discord.MessageEmbed()
+  .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
+  .setColor('RED')
+  .setTitle('>abal [alliance name / username]')

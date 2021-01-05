@@ -10,11 +10,7 @@ class Account {
       this.busy = false
     })
     this.bot.on('kicked', (reason) => {
-      console.log(reason)
-      setTimeout(() => {
-        // gave a timeout to maybe fix crash on reboot
-        this.relog()
-      }, 3000)
+      console.log(`Bot was just kicked for: ${JSON.parse(reason).text || ''}`)
     })
   }
 
@@ -29,7 +25,7 @@ class Account {
           this.busy = false
           resolve()
         })
-      }, 5000)
+      }, 3000)
     })
   }
 
@@ -94,8 +90,23 @@ class Accounts {
   }
 
   relogAll () {
-    return Promise.all(this.accounts.map((x) => x.relog()))
+    const reloggedAccounts = []
+    return new Promise((resolve, reject) => {
+      this.accounts.forEach((acc, ix) => {
+        setTimeout(() => {
+          reloggedAccounts.push(acc.relog())
+          if (reloggedAccounts.length === this.accounts.length) {
+            resolveAwaitedPromises(reloggedAccounts, resolve)
+          }
+        }, (ix + 1) * 1000)
+      })
+    })
   }
+}
+
+async function resolveAwaitedPromises (proms, resolve) {
+  const resolved = await Promise.all(proms)
+  resolve(resolved)
 }
 
 module.exports = { Accounts }

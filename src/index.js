@@ -66,28 +66,35 @@ client.on('message', (message) => {
     }
   }
 
-  const rejectAfterTimeout = (timeout) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => reject(new Error('Request timed out')), timeout)
+  const promiseTimeout = (ms, promise) => {
+    // Create a promise that rejects in <ms> milliseconds
+    const timeout = new Promise((resolve, reject) => {
+      const id = setTimeout(() => {
+        clearTimeout(id)
+        reject(new Error('Timed out in ' + ms + 'ms.'))
+      }, ms)
     })
+
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([
+      promise,
+      timeout
+    ])
   }
+
   if (command.race) {
-    try {
-      Promise.race([
-        runCommand(command, message, args),
-        rejectAfterTimeout(5000)
-      ])
-    } catch (reason) {
-      console.log(
-        'A command just failed that is supposed to be raced because: '
-      )
-      console.log(reason)
-      message.channel.send(botRestarting)
-      accounts.relogAll().then((_) => {
-        console.log('restarrting')
-        runCommand(command, message, args)
+    const prom = command.execute(message, args, accounts)
+    const timeoutHandler = promiseTimeout(2000, prom)
+    timeoutHandler.catch(_ => {
+      const embed = message.channel.send(botRestarting)
+      accounts.relogAll().then(x => {
+        embed.then(msg => msg.delete())
+        console.log('bot restarted due to time limit exceeded.')
+        setTimeout(() => {
+          runCommand(command, message, args)
+        }, 1000)
       })
-    }
+    })
   } else runCommand(command, message, args)
 })
 
