@@ -2,14 +2,10 @@ require('dotenv').config()
 const db = require('monk')(process.env.MONGO_CONN_STR)
 const Discord = require('discord.js')
 const {
-  allAcountsBusy,
-  removeCommas,
-  numberWithCommas,
   escapeMarkdown,
-  splitToChunks,
   fetchEmoji
 } = require('../util/discord-helper')
-const INCREMENT = 20
+const INCREMENT = 20 // page increment
 
 const bosses = [
   'Bandit King',
@@ -63,7 +59,7 @@ function createCollectorMessage (message, author) {
     if (reactingUser === author) {
       onCollect(r.emoji, message)
       message.reactions.removeAll()
-      if (r.emoji.name == emojiX) {
+      if (r.emoji.name === emojiX) {
         collector.stop()
         // do nothing after clearing emojis
       } else {
@@ -112,7 +108,7 @@ function createCollectorMessageForPage (message, author) {
     const reactingUser = r.users.cache.find((x) => !x.bot)
     if (reactingUser === author) {
       message.reactions.removeAll()
-      if (r.emoji.name == emojiX) {
+      if (r.emoji.name === emojiX) {
         collector.stop()
         // do nothing after clearing emojis
       } else if (r.emoji.name === backArrowEmoji) {

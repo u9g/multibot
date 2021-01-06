@@ -10,7 +10,7 @@ module.exports = {
     const subcommand = args[0]
     if (args.length === 0) {
       const status = accounts.status()
-      message.channel.send(renderStatusCommand(status))
+      message.channel.send(statusEmbed(status))
     } else if (subcommand === 'busy' && !isNaN(+args[1])) {
       accounts.toggleBusy(+args[1])
       message.channel.send(operationDone)
@@ -19,6 +19,7 @@ module.exports = {
     } else if (subcommand === 'relogall') {
       sendFinishOnPromiseEnd(accounts.relogAll(), message)
     } else if (subcommand === 'cmd' && !isNaN(+args[1])) {
+      // >stats cmd
       const command = message.content.substring(
         message.content.indexOf('"') + 1,
         message.content.lastIndexOf('"')
@@ -33,13 +34,12 @@ module.exports = {
 const sendFinishOnPromiseEnd = (prom, msg) =>
   prom.then((_) => msg.channel.send(operationDone))
 
-function renderStatusCommand (status) {
-  return new Discord.MessageEmbed()
+const statusEmbed = (status) =>
+  new Discord.MessageEmbed()
     .setTitle('Online Accounts 🚀')
     .setDescription(status)
     .setColor('GREEN')
     .setTimestamp()
-}
 
 const operationDone = new Discord.MessageEmbed()
   .setTitle('Operation finished ✅')

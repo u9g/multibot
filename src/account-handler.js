@@ -67,9 +67,7 @@ class Accounts {
     return this.accounts
       .map(
         (elem, ix) =>
-          `${ix}. ${elem.bot.username || elem.options.username}: ${isBusy(
-            elem.busy
-          )}`
+          `${ix}. ${elem.bot.username || elem.options.username}: ${isBusy(elem.busy)}`
       )
       .join('\n')
   }

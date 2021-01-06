@@ -1,10 +1,7 @@
 const Discord = require('discord.js')
 const {
   allAcountsBusy,
-  removeCommas,
-  numberWithCommas,
-  escapeMarkdown,
-  splitToChunks
+  escapeMarkdown
 } = require('../util/discord-helper')
 
 module.exports = {
@@ -25,21 +22,21 @@ module.exports = {
       return !user.bot && reactionArrow.includes(reaction.emoji.name) // check if the emoji is inside the list of emojis, and if the user is not a bot
     }
 
-    function onCollect (emoji, message, i, bot) {
-      if (emoji.name === emojiPrevious && i > boundaries[0]) {
-        const newIx = i - 1
+    function onCollect (emoji, message, page, bot) {
+      if (emoji.name === emojiPrevious && page > boundaries[0]) {
+        const newIx = page - 1
         renderCommand(bot, newIx).then((embed) => {
           message.edit(embed)
         })
-        i--
-      } else if (emoji.name === emojiNext && i < boundaries[1]) {
-        const newIx = i + 1
-        renderCommand(bot, newIx).then((embed) => {
+        page--
+      } else if (emoji.name === emojiNext && page < boundaries[1]) {
+        const newPage = page + 1
+        renderCommand(bot, newPage).then((embed) => {
           message.edit(embed)
         })
-        i++
+        page++
       }
-      return i
+      return page
     }
 
     function createCollectorMessage (message, author, acc, firstPageIx) {
@@ -51,7 +48,7 @@ module.exports = {
         if (reactingUser === author) {
           i = onCollect(r.emoji, message, i, bot)
           message.reactions.removeAll()
-          if (r.emoji.name == emojiX) {
+          if (r.emoji.name === emojiX) {
             collector.stop()
             // do nothing after clearing emojis
           } else if (i === boundaries[0]) {
@@ -198,7 +195,7 @@ const createDescription = (players, page) => {
     .map((user, ix) => {
       let [ign, lvl] = user
       ign = escapeMarkdown(ign)
-      if (page == 1) {
+      if (page === 1) {
         page = 0
       }
       return `${15 * page + ix + 1}. **${ign}** has island level **${lvl}**`

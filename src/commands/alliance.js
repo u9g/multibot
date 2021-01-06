@@ -6,7 +6,7 @@ module.exports = {
   name: 'alliance',
   cooldown: 5,
   aliases: ['a'],
-  description: "Get's a player's balance.",
+  description: 'Various alliance commands.',
   execute (message, args, accounts) {
     const subcommand = args[0]
     const input = [args[1], args[2]]

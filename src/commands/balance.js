@@ -10,7 +10,7 @@ const { allAcountsBusy, escapeMarkdown } = require('../util/discord-helper')
 //     const acc = accounts.takeOne();
 
 //     if (acc === null) {
-//       return message.channel.send(allAcountsBusy;
+//       return message.channel.send(allAcountsBusy);
 //     }
 //     if (!args[0]) {
 //       return message.channel.send(createHelpEmbed());
