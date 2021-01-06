@@ -1,17 +1,12 @@
 const Discord = require('discord.js')
 const {
-  allAcountsBusy,
-  removeCommas,
-  numberWithCommas,
-  escapeMarkdown,
-  splitToChunks
+  allAcountsBusy
 } = require('../util/discord-helper')
 
 module.exports = {
   name: 'lvltop',
   cooldown: 5,
   aliases: ['leveltop', 'roletop'],
-  race: true,
   description: 'Gets either the top 15 players or the given page of level top.',
   execute (message, args, accounts) {
     // x
@@ -52,7 +47,7 @@ module.exports = {
         if (reactingUser === author) {
           i = onCollect(r.emoji, message, i, bot)
           message.reactions.removeAll()
-          if (r.emoji.name == emojiX) {
+          if (r.emoji.name === emojiX) {
             collector.stop()
             // do nothing after clearing emojis
           } else if (i === boundaries[0]) {

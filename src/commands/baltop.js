@@ -1,17 +1,13 @@
 const Discord = require('discord.js')
 const {
   allAcountsBusy,
-  removeCommas,
-  numberWithCommas,
-  escapeMarkdown,
-  splitToChunks
+  escapeMarkdown
 } = require('../util/discord-helper')
 
 module.exports = {
   name: 'baltop',
   cooldown: 5,
   aliases: ['balancetop'],
-  race: true,
   description: 'Gets either the top 15 players or the given page of level top.',
   execute (message, args, accounts) {
     // x
@@ -52,7 +48,7 @@ module.exports = {
         if (reactingUser === author) {
           i = onCollect(r.emoji, message, i, bot)
           message.reactions.removeAll()
-          if (r.emoji.name == emojiX) {
+          if (r.emoji.name === emojiX) {
             collector.stop()
             // do nothing after clearing emojis
           } else if (i === boundaries[0]) {
@@ -148,7 +144,7 @@ function getFirstPage (bot, i) {
 function renderCommand (bot, page) {
   return new Promise((resolve, reject) => {
     const regex = {
-      user: /\d+\. (.+)\: \$(.+)/,
+      user: /\d+\. (.+): \$(.+)/,
       start: /Top Balances \(\d+\/\d+\)/
     }
 

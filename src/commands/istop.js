@@ -7,7 +7,6 @@ const {
 module.exports = {
   name: 'istop',
   cooldown: 5,
-  race: true,
   description: 'Gets either the top 15 players or the given page of level top.',
   execute (message, args, accounts) {
     // x
