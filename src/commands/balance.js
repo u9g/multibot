@@ -60,7 +60,7 @@ function renderCommand (bot, ign) {
     return new Discord.MessageEmbed()
       .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
       .setColor('RED')
-      .setTitle("❌ The user either doesn't exist or doesn't have a ballance.")
+      .setTitle("❌ The user either doesn't exist or doesn't have a balance.")
   }
   function CreateEmbed (info) {
     return new Discord.MessageEmbed()

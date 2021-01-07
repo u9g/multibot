@@ -55,7 +55,7 @@ function getLore (item) {
 }
 
 function sortArrayOfObjects (arr, field) {
-  return (arr) => arr.sort((a, b) => b[field] - a[field])
+  return arr.sort((a, b) => (+b[field]) - (+a[field]))
 }
 
 module.exports = {
