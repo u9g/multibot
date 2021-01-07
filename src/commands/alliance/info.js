@@ -7,7 +7,7 @@ const regex = {
   offlineMembers: /Offline Members: (.+)?/,
   allies: /Allies: (.+)?/,
   truces: /Truces: (.+)?/,
-  notAlliance: /\(\!\) Unable to find alliance from '.+'/
+  notAlliance: /\(!\) Unable to find alliance from '.+'/
 }
 
 function renderCommand (accounts, name) {
