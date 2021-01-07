@@ -35,6 +35,7 @@ class Account {
 
   done () {
     this.bot.removeAllListeners(['message'])
+    this.bot.removeAllListeners(['windowOpen'])
     this.busy = false
   }
 }

@@ -33,11 +33,38 @@ const fetchEmoji = (emojiWanted, client) => {
   return emoji
 }
 
+function getLore (item) {
+  let message = ''
+  if (item.nbt == null) return message
+
+  const nbt = require('prismarine-nbt')
+  const ChatMessage = require('prismarine-chat')('1.12.2')
+
+  const data = nbt.simplify(item.nbt)
+  const display = data.display
+  if (display == null) return message
+
+  const lore = display.Lore
+  if (lore == null) return message
+  for (const line of lore) {
+    message += new ChatMessage(line).toString()
+    message += '\n'
+  }
+
+  return message
+}
+
+function sortArrayOfObjects (arr, field) {
+  return (arr) => arr.sort((a, b) => b[field] - a[field])
+}
+
 module.exports = {
   allAcountsBusy,
   escapeMarkdown,
   removeCommas,
   numberWithCommas,
   splitToChunks,
-  fetchEmoji
+  fetchEmoji,
+  getLore,
+  sortArrayOfObjects
 }
