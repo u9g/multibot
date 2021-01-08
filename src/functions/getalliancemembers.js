@@ -25,6 +25,7 @@ module.exports = (accounts, identifier) => {
         acc.done()
         resolve([])
       } else if (regex.members.test(text)) {
+        acc.done()
         resolve(allianceMembers)
       }
     })

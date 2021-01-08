@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 const { renderCommand: renderListCommand } = require('./alliance/list')
 const { renderCommand: renderInfoCommand } = require('./alliance/info')
+const { renderCommand: renderLevelCommand } = require('./alliance/level')
 
 module.exports = {
   name: 'alliance',
@@ -25,6 +26,14 @@ module.exports = {
           message.channel.send(embed)
         })
       }
+    } else if (subcommand === 'level') {
+      if (!input[0]) {
+        message.channel.send(levelNoAllianceEmbed)
+      } else {
+        renderLevelCommand(accounts, input[0]).then((embed) => {
+          message.channel.send(embed)
+        })
+      }
     } else {
       return message.channel.send(helpEmbed)
     }
@@ -40,4 +49,7 @@ const helpEmbed = new Discord.MessageEmbed()
   )
 const infoNoAllianceEmbed = new Discord.MessageEmbed()
   .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-  .setTitle('You forgot an alliance. Follow the format `>a who [alliance]`')
+  .setTitle('You forgot an alliance. Follow the format `>a who [alliance/ign]`')
+const levelNoAllianceEmbed = new Discord.MessageEmbed()
+  .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
+  .setTitle('You forgot an alliance. Follow the format `>a level [alliance/ign]`')

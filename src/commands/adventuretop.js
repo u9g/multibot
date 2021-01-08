@@ -49,6 +49,7 @@ const helpEmbed = new Discord.MessageEmbed()
 const regex = /\d+\. (.+) - (.+) Adventure Points/
 
 function asyncRunner (acc, accounts, timeFrame) {
+  const timeNow = new Date(Date.now())
   const time = {
     DAILY: 11,
     WEEKLY: 13,
@@ -73,8 +74,10 @@ function asyncRunner (acc, accounts, timeFrame) {
             return { ign: ign, points: points }
           })
         getAlliancesFromUsernames(players, accounts).then(arr => {
-          const embed = makeEmbed(arr, timeFrame)
-          accounts.takeOne().relog() // relog the account after
+          const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
+            .toFixed(2)
+            .toString()
+          const embed = makeEmbed(arr, timeFrame, timePassed)
           resolve(embed)
         })
       }
@@ -90,14 +93,17 @@ function asyncRunner (acc, accounts, timeFrame) {
   }
 }
 
-function makeEmbed (data, timeFrame) {
+function makeEmbed (data, timeFrame, timePassed) {
   const desc = data.map((user, ix) => {
     const alliance = (user.alliance === 'N/A') ? '' : `[${user.alliance}] `
     return `${ix + 1}. ${alliance}**${user.ign}**: ${user.points}`
   })
+  const timeString = `✔️ in ${timePassed}s`
   return new Discord.MessageEmbed()
+    .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setTitle('Most AP Gained in ' + timeFrame)
     .setDescription(desc)
     .setColor('AQUA')
     .setTimestamp()
+    .setFooter(timeString)
 }
