@@ -189,11 +189,6 @@ function createEmbed (info, page, timePassed) {
     .setFooter(timeString)
 }
 
-const helpEmbed = new Discord.MessageEmbed()
-  .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-  .setTitle('>lvltop [optional page number up to 20]')
-  .setColor('PURPLE')
-
 const createDescription = (info) => {
   const desc = info.map((user, ix) => {
     const [ign, lvl] = user

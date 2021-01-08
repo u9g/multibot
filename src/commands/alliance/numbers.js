@@ -1,5 +1,4 @@
 const Discord = require('discord.js')
-// TODO: sort allies/truces by # of players
 const { sortArrayOfObjects, escapeMarkdown, getTimePassed } = require('../../util/discord-helper')
 const getalliancemembers = require('../../functions/getalliancemembers')
 const getfriendlyalliances = require('../../functions/getfriendlyalliances')
@@ -18,8 +17,10 @@ async function asyncRunner (accounts, identifier) {
     const friendlyAlliances = await getfriendlyalliances(accounts, identifier)
     const totalFrendlies = friendlyAlliances.truces.length + friendlyAlliances.allies.length
     if (totalFrendlies > 0) {
-      const truces = await countFriendliesInList(accounts, friendlyAlliances, 'truces')
-      const allies = await countFriendliesInList(accounts, friendlyAlliances, 'allies')
+      let truces = await countFriendliesInList(accounts, friendlyAlliances, 'truces')
+      truces = sortArrayOfObjects(truces, 2)
+      let allies = await countFriendliesInList(accounts, friendlyAlliances, 'allies')
+      allies = sortArrayOfObjects(allies, 2)
       const currAllianceInfo = await getalliancemembers(accounts, identifier)
       const currAlliance = [currAllianceName, [currAllianceInfo.all.length, currAllianceInfo.online.length]]
       const timePassed = getTimePassed(timeNow)

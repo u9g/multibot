@@ -8,6 +8,7 @@ module.exports = {
   name: 'alliance',
   cooldown: 5,
   aliases: ['a'],
+  race: true,
   description: 'Various alliance commands.',
   execute (message, args, accounts) {
     const subcommand = args[0]
