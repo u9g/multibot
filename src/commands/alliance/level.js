@@ -50,7 +50,7 @@ function makeEmbed (identifier, data, timePassed) {
 
 const notAllianceEmbed = new Discord.MessageEmbed()
   .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
-  .setTitle("This alliance doesn't exist")
+  .setTitle("This alliance doesn't exist, that player doesn't have an alliance, or that player doesn't exist")
   .setColor('AQUA')
   .setTimestamp()
 

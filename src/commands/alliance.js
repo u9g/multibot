@@ -45,7 +45,8 @@ const helpEmbed = new Discord.MessageEmbed()
   .setTitle('You forgot a subcommand for the >a command, try these:')
   .setDescription(
     '\n**·** `>a list` - alliances with the most players online' +
-      '\n**·** `>a who [alliance name]` - get information about an alliance'
+      '\n**·** `>a who [alliance/ign]` - get information about an alliance' +
+      '\n **·** `>a level [alliance/ign]` - get level of all players in an alliance'
   )
 const infoNoAllianceEmbed = new Discord.MessageEmbed()
   .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
