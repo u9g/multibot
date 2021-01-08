@@ -1,6 +1,6 @@
 const regex = {
-  onlineMembers: /Online Members: (.+)?/,
-  offlineMembers: /Offline Members: (.+)?/,
+  allies: /Allies: (.+)?/,
+  truces: /Truces: (.+)?/,
   foundAlliance: /-+ \[ (.+) \] -+/,
   notFoundAlliance: /\(!\) Unable to find alliance from '.+'/,
   members: /Members: (.+)?/
@@ -14,24 +14,25 @@ module.exports = (accounts, identifier) => {
     acc.setBusy()
     const bot = acc.bot
     bot.chat(`/a who ${identifier}`)
-    const allianceMembers = []
-    const onlineMembers = []
+    const truces = []
+    const allies = []
     bot.on('message', (msg) => {
       const text = msg.toString()
-      if (regex.onlineMembers.test(text)) {
-        allianceMembers.push(...makeList(text, regex.onlineMembers))
-        onlineMembers.push(...makeList(text, regex.onlineMembers))
-      } else if (regex.offlineMembers.test(text)) {
-        allianceMembers.push(...makeList(text, regex.offlineMembers))
+      if (regex.truces.test(text) && !text.includes('Pending')) {
+        truces.push(...makeList(text, regex.truces))
+      } else if (regex.allies.test(text) && !text.includes('Pending')) {
+        allies.push(...makeList(text, regex.allies))
       } else if (regex.notFoundAlliance.test(text) || text.trim() === 'Usage: /alliance info <alliance/player>') {
         acc.done()
         resolve([])
       } else if (regex.members.test(text)) {
-        acc.done()
-        resolve({
-          all: allianceMembers,
-          online: onlineMembers
-        })
+        if (!text.includes('Online') && !text.includes('Offline')) {
+          acc.done()
+          resolve({
+            truces: truces,
+            allies: allies
+          })
+        }
       }
     })
   })

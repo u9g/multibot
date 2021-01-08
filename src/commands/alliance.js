@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const { renderCommand: renderListCommand } = require('./alliance/list')
 const { renderCommand: renderInfoCommand } = require('./alliance/info')
 const { renderCommand: renderLevelCommand } = require('./alliance/level')
+const { renderCommand: renderNumbersCommand } = require('./alliance/numbers')
 
 module.exports = {
   name: 'alliance',
@@ -34,8 +35,14 @@ module.exports = {
           message.channel.send(embed)
         })
       }
-    } else {
-      return message.channel.send(helpEmbed)
+    } else if (subcommand === 'numbers') {
+      if (!input[0]) {
+        message.channel.send(numbersNoAllianceEmbed)
+      } else {
+        renderNumbersCommand(accounts, input[0]).then((embed) => {
+          message.channel.send(embed)
+        })
+      }
     }
   }
 }
@@ -46,11 +53,16 @@ const helpEmbed = new Discord.MessageEmbed()
   .setDescription(
     '\n**·** `>a list` - alliances with the most players online' +
       '\n**·** `>a who [alliance/ign]` - get information about an alliance' +
-      '\n **·** `>a level [alliance/ign]` - get level of all players in an alliance'
+      '\n **·** `>a level [alliance/ign]` - get level of all players in an alliance' +
+      '\n **·** `>a numbers [alliance/ign]` - gets number of players in an alliance and their truces/allies'
   )
+  .setColor('AQUA')
 const infoNoAllianceEmbed = new Discord.MessageEmbed()
   .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
   .setTitle('You forgot an alliance. Follow the format `>a who [alliance/ign]`')
 const levelNoAllianceEmbed = new Discord.MessageEmbed()
   .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
   .setTitle('You forgot an alliance. Follow the format `>a level [alliance/ign]`')
+const numbersNoAllianceEmbed = new Discord.MessageEmbed()
+  .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
+  .setTitle('You forgot an alliance. Follow the format `>a numbers [alliance/ign]`')

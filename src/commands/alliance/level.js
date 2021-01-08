@@ -12,7 +12,7 @@ function renderCommand (accounts, identifier) {
 
 async function asyncRunner (accounts, identifier) {
   const timeNow = new Date(Date.now())
-  const allianceMembers = await getalliancemembers(accounts, identifier)
+  const allianceMembers = (await getalliancemembers(accounts, identifier)).all
   if (allianceMembers.length > 0) {
     let allianceMemberLevels = []
     for await (const member of allianceMembers) {
