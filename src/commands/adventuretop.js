@@ -92,7 +92,7 @@ function asyncRunner (acc, accounts, timeFrame) {
 
 function makeEmbed (data, timeFrame) {
   const desc = data.map((user, ix) => {
-    const alliance = (user.alliance === 'N/A') ? '' : `[**${user.alliance}**] `
+    const alliance = (user.alliance === 'N/A') ? '' : `[${user.alliance}] `
     return `${ix + 1}. ${alliance}**${user.ign}**: ${user.points}`
   })
   return new Discord.MessageEmbed()
