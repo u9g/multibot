@@ -52,7 +52,8 @@ class Accounts {
   }
 
   takeOne () {
-    const acc = this.accounts.find((x) => !x.busy)
+    const accs = this.accounts.filter((x) => !x.busy)
+    const acc = accs[Math.floor(Math.random() * accs.length)]
     if (acc !== undefined) {
       acc.setBusy()
       return acc
