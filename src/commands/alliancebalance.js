@@ -4,7 +4,8 @@ const {
   removeCommas,
   numberWithCommas,
   escapeMarkdown,
-  splitToChunks
+  splitToChunks,
+  getTimePassed
 } = require('../util/discord-helper')
 
 module.exports = {
@@ -66,9 +67,7 @@ async function asyncRunner (acc, args, message) {
     .forEach((players) => allPlayers.push(...players))
   // remove commas
   allPlayers.forEach((x) => (x.balance = removeCommas(x.balance)))
-  const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-    .toFixed(2)
-    .toString()
+  const timePassed = getTimePassed(timeNow)
   return makeEmbed(allPlayers, alliance.name, timePassed)
 }
 

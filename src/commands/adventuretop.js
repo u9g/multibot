@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const { allAcountsBusy, getLore } = require('../util/discord-helper')
+const { allAcountsBusy, getLore, getTimePassed } = require('../util/discord-helper')
 const getuseralliance = require('../functions/getuseralliance')
 
 module.exports = {
@@ -74,9 +74,7 @@ function asyncRunner (acc, accounts, timeFrame) {
             return { ign: ign, points: points }
           })
         getAlliancesFromUsernames(players, accounts).then(arr => {
-          const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-            .toFixed(2)
-            .toString()
+          const timePassed = getTimePassed(timeNow)
           const embed = makeEmbed(arr, timeFrame, timePassed)
           resolve(embed)
         })

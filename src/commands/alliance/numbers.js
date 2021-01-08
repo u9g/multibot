@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 // TODO: sort allies/truces by # of players
-const { sortArrayOfObjects, escapeMarkdown } = require('../../util/discord-helper')
+const { sortArrayOfObjects, escapeMarkdown, getTimePassed } = require('../../util/discord-helper')
 const getalliancemembers = require('../../functions/getalliancemembers')
 const getfriendlyalliances = require('../../functions/getfriendlyalliances')
 const getuseralliance = require('../../functions/getuseralliance')
@@ -22,17 +22,13 @@ async function asyncRunner (accounts, identifier) {
       const allies = await countFriendliesInList(accounts, friendlyAlliances, 'allies')
       const currAllianceInfo = await getalliancemembers(accounts, identifier)
       const currAlliance = [currAllianceName, [currAllianceInfo.all.length, currAllianceInfo.online.length]]
-      const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-        .toFixed(2)
-        .toString()
+      const timePassed = getTimePassed(timeNow)
       const embed = makeEmbed(truces, allies, currAlliance, timePassed)
       return embed
     } else {
       const currAllianceInfo = await getalliancemembers(accounts, identifier)
       const currAlliance = [currAllianceName, [currAllianceInfo.all.length, currAllianceInfo.online.length]]
-      const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-        .toFixed(2)
-        .toString()
+      const timePassed = getTimePassed(timeNow)
       const embed = makeEmbed([], [], currAlliance, timePassed)
       return embed
     }

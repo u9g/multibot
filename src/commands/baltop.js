@@ -1,7 +1,8 @@
 const Discord = require('discord.js')
 const {
   allAcountsBusy,
-  escapeMarkdown
+  escapeMarkdown,
+  getTimePassed
 } = require('../util/discord-helper')
 
 module.exports = {
@@ -160,9 +161,7 @@ function renderCommand (bot, page) {
         players.push([ign, money])
         if (players.length === 15) {
           listening = false
-          const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-            .toFixed(2)
-            .toString()
+          const timePassed = getTimePassed(timeNow)
           const embed = createEmbed(players, page, timePassed)
           bot.removeAllListeners(['message'])
           resolve(embed)

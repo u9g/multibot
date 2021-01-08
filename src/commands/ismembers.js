@@ -2,7 +2,8 @@ const Discord = require('discord.js')
 const {
   allAcountsBusy,
   escapeMarkdown,
-  splitToChunks
+  splitToChunks,
+  getTimePassed
 } = require('../util/discord-helper')
 
 module.exports = {
@@ -27,9 +28,7 @@ module.exports = {
 
       const timeNow = new Date(Date.now())
       asyncRunner(acc, args, message).then((x) => {
-        const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-          .toFixed(2)
-          .toString()
+        const timePassed = getTimePassed(timeNow)
         const embed = makeEmbed(x, timePassed)
         resolve()
         message.channel.send(embed)

@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const { sortArrayOfObjects, escapeMarkdown } = require('../../util/discord-helper')
+const { sortArrayOfObjects, escapeMarkdown, getTimePassed } = require('../../util/discord-helper')
 const getalliancemembers = require('../../functions/getalliancemembers')
 const getuserlevel = require('../../functions/getuserlevel')
 const getuseralliance = require('../../functions/getuseralliance')
@@ -23,9 +23,7 @@ async function asyncRunner (accounts, identifier) {
     }
     const allianceName = await getuseralliance(accounts, identifier)
     allianceMemberLevels = sortArrayOfObjects(allianceMemberLevels, 'level')
-    const timePassed = ((new Date(Date.now()) - timeNow) / 1000)
-      .toFixed(2)
-      .toString()
+    const timePassed = getTimePassed(timeNow)
     const embed = makeEmbed(allianceName, allianceMemberLevels, timePassed)
     return embed
   } else {

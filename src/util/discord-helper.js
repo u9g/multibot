@@ -58,6 +58,11 @@ function sortArrayOfObjects (arr, field) {
   return arr.sort((a, b) => (+b[field]) - (+a[field]))
 }
 
+function getTimePassed (timeNow) {
+  return ((new Date(Date.now()) - timeNow) / 1000)
+    .toFixed(2)
+    .toString()
+}
 module.exports = {
   allAcountsBusy,
   escapeMarkdown,
@@ -66,5 +71,6 @@ module.exports = {
   splitToChunks,
   fetchEmoji,
   getLore,
-  sortArrayOfObjects
+  sortArrayOfObjects,
+  getTimePassed
 }
