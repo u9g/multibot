@@ -13,20 +13,24 @@ function renderCommand (accounts, identifier) {
 async function asyncRunner (accounts, identifier) {
   const timeNow = new Date(Date.now())
   const currAllianceName = await getuseralliance(accounts, identifier)
-  if (currAllianceName !== 'N/A') {
+  if (currAllianceName !== 'N/A') { // 'N/A' if the alliance doesn't exist
     const friendlyAlliances = await getfriendlyalliances(accounts, identifier)
     const totalFrendlies = friendlyAlliances.truces.length + friendlyAlliances.allies.length
     if (totalFrendlies > 0) {
+      // gather data about the friendly alliances
       let truces = await countFriendliesInList(accounts, friendlyAlliances, 'truces')
-      truces = sortArrayOfObjects(truces, 2)
       let allies = await countFriendliesInList(accounts, friendlyAlliances, 'allies')
+      // sort the friendly alliances by online players
+      truces = sortArrayOfObjects(truces, 2)
       allies = sortArrayOfObjects(allies, 2)
+      // get info about the alliance that the user gave
       const currAllianceInfo = await getalliancemembers(accounts, identifier)
       const currAlliance = [currAllianceName, [currAllianceInfo.all.length, currAllianceInfo.online.length]]
       const timePassed = getTimePassed(timeNow)
       const embed = makeEmbed(truces, allies, currAlliance, timePassed)
       return embed
-    } else {
+    } else { // no truces / allies
+      // get info about the alliance that the user gave
       const currAllianceInfo = await getalliancemembers(accounts, identifier)
       const currAlliance = [currAllianceName, [currAllianceInfo.all.length, currAllianceInfo.online.length]]
       const timePassed = getTimePassed(timeNow)
@@ -39,6 +43,8 @@ async function asyncRunner (accounts, identifier) {
 }
 
 async function countFriendliesInList (accounts, friendlies, type) {
+  // type is allies/truces because frendlies item contains both and needs to be seperated
+  // gets the # of online and total members of the alliance
   const arr = []
   for await (const alliance of friendlies[type]) {
     const allianceInfo = await getalliancemembers(accounts, alliance)
@@ -80,10 +86,12 @@ function makeEmbed (truces, allies, currAlliance, timePassed) {
 }
 
 const total = (truces, allies, currAlliance) => {
+  // reduces makes the arrays go from [1,2,3] => 6
   const totalTruces = reduce(truces.map(alliance => alliance[1]))
   const totalOnlineTruces = reduce(truces.map(alliance => alliance[2]))
   const totalAllies = reduce(allies.map(alliance => alliance[1]))
   const totalOnlineAllies = reduce(allies.map(alliance => alliance[2]))
+  // gets the number of players in total & alliance for the alliance given by user
   const curr = currAlliance[1][0]
   const currOnline = currAlliance[1][1]
   return [(totalTruces + totalAllies + curr), (totalOnlineTruces + totalOnlineAllies + currOnline)]
