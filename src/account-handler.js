@@ -79,7 +79,7 @@ class Accounts {
   }
 
   relogAccount (ix) {
-    this.accounts[ix].relog()
+    return this.accounts[ix].relog()
   }
 
   takeMany () {
