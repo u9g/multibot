@@ -10,7 +10,7 @@ module.exports = (accounts, identifier) => {
   // TODO: add something for if the alliance has the same name as the player's ign
   return new Promise((resolve, reject) => {
     const acc = accounts.takeOne()
-    if (acc === null) return null
+    if (acc === null) resolve(null)
     acc.setBusy()
     const bot = acc.bot
     bot.chat(`/a who ${identifier}`)

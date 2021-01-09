@@ -6,7 +6,7 @@ const regex = {
 module.exports = (accounts, ign) => {
   return new Promise((resolve, reject) => {
     const acc = accounts.takeOne()
-    if (acc === null) return null
+    if (acc === null) resolve(null)
     acc.setBusy()
     const bot = acc.bot
     bot.chat(`/roles ${ign}`)
@@ -14,7 +14,7 @@ module.exports = (accounts, ign) => {
       const text = msg.toString()
       if (regex.playerNotFound.test(text)) {
         acc.done()
-        return null
+        resolve(null)
       }
     })
     bot.on('windowOpen', (window) => {

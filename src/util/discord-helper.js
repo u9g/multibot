@@ -63,6 +63,17 @@ function getTimePassed (timeNow) {
     .toFixed(2)
     .toString()
 }
+
+function addReduce (arr) {
+  const reducer = (accumulator, currentValue) => accumulator + currentValue
+  const count = 0
+  if (arr.length === 0) {
+    return count
+  } else {
+    return arr.reduce(reducer)
+  }
+}
+
 module.exports = {
   allAcountsBusy,
   escapeMarkdown,
@@ -72,5 +83,6 @@ module.exports = {
   fetchEmoji,
   getLore,
   sortArrayOfObjects,
-  getTimePassed
+  getTimePassed,
+  addReduce
 }

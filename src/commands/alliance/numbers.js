@@ -1,5 +1,5 @@
 const Discord = require('discord.js')
-const { sortArrayOfObjects, escapeMarkdown, getTimePassed } = require('../../util/discord-helper')
+const { sortArrayOfObjects, escapeMarkdown, getTimePassed, addReduce: reduce } = require('../../util/discord-helper')
 const getalliancemembers = require('../../functions/getalliancemembers')
 const getfriendlyalliances = require('../../functions/getfriendlyalliances')
 const getuseralliance = require('../../functions/getuseralliance')
@@ -95,16 +95,6 @@ const total = (truces, allies, currAlliance) => {
   const curr = currAlliance[1][0]
   const currOnline = currAlliance[1][1]
   return [(totalTruces + totalAllies + curr), (totalOnlineTruces + totalOnlineAllies + currOnline)]
-}
-
-const reduce = (arr) => {
-  const reducer = (accumulator, currentValue) => accumulator + currentValue
-  const count = 0
-  if (arr.length === 0) {
-    return count
-  } else {
-    return arr.reduce(reducer)
-  }
 }
 
 const notAllianceEmbed = new Discord.MessageEmbed()

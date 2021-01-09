@@ -29,6 +29,14 @@ class Account {
     })
   }
 
+  relogDelay (delay) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.relog())
+      }, delay)
+    })
+  }
+
   setBusy () {
     this.busy = true
   }
@@ -89,24 +97,29 @@ class Accounts {
     return availAccs.slice(SAFE_ACCOUNTS)
   }
 
+  // relogAll () {
+  //   const reloggedAccounts = []
+  //   return new Promise((resolve, reject) => {
+  //     this.accounts.forEach((acc, ix) => {
+  //       setTimeout(() => {
+  //         reloggedAccounts.push(acc.relog())
+  //         if (reloggedAccounts.length === this.accounts.length) {
+  //           resolveAwaitedPromises(reloggedAccounts, resolve)
+  //         }
+  //       }, (ix + 1) * 1000)
+  //     })
+  //   })
+  // }
   relogAll () {
-    const reloggedAccounts = []
     return new Promise((resolve, reject) => {
-      this.accounts.forEach((acc, ix) => {
-        setTimeout(() => {
-          reloggedAccounts.push(acc.relog())
-          if (reloggedAccounts.length === this.accounts.length) {
-            resolveAwaitedPromises(reloggedAccounts, resolve)
-          }
-        }, (ix + 1) * 1000)
-      })
+      const proms = this.accounts.map((acc, ix) => acc.relogDelay((ix + 1) * 1000))
+      resolveAwaitedPromises(proms, resolve).then(done => resolve(done))
     })
   }
 }
 
 async function resolveAwaitedPromises (proms, resolve) {
-  const resolved = await Promise.all(proms)
-  resolve(resolved)
+  return await Promise.all(proms)
 }
 
 module.exports = { Accounts }
