@@ -42,28 +42,29 @@ client.on('message', (message) => {
 
   if (!command) return
 
-  if (!cooldowns.has(command.name)) {
-    cooldowns.set(command.name, new Discord.Collection())
+  if (!cooldowns.has(message.author.id)) {
+    cooldowns.set(message.author.id, new Discord.Collection())
   }
 
   const now = Date.now()
-  const timestamps = cooldowns.get(command.name)
-  const cooldownAmount = (command.cooldown || 3) * 1000
+  const timestamps = cooldowns.get(message.author.id)
+  const cooldownAmount = 10000
 
-  if (timestamps.has(message.author.id)) {
-    const expirationTime = timestamps.get(message.author.id) + cooldownAmount
+  if (timestamps.has(command.name)) {
+    const expirationTime = timestamps.get(command.name) + cooldownAmount
 
     if (now < expirationTime) {
-      timestamps.set(message.author.id, now)
-      setTimeout(() => timestamps.delete(message.author.id), cooldownAmount)
+      timestamps.set(command.name, now)
+      setTimeout(() => timestamps.delete(command.name), cooldownAmount)
 
       const timeLeft = (expirationTime - now) / 1000
       return message.reply(
-        `please wait ${timeLeft.toFixed(
-          1
-        )} more second(s) before reusing the \`${command.name}\` command.`
+        `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`
       )
     }
+  } else {
+    timestamps.set(command.name, now)
+    setTimeout(() => timestamps.delete(command.name), cooldownAmount)
   }
 
   const promiseTimeout = (ms, promise) => {

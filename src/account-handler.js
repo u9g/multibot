@@ -97,19 +97,6 @@ class Accounts {
     return availAccs.slice(SAFE_ACCOUNTS)
   }
 
-  // relogAll () {
-  //   const reloggedAccounts = []
-  //   return new Promise((resolve, reject) => {
-  //     this.accounts.forEach((acc, ix) => {
-  //       setTimeout(() => {
-  //         reloggedAccounts.push(acc.relog())
-  //         if (reloggedAccounts.length === this.accounts.length) {
-  //           resolveAwaitedPromises(reloggedAccounts, resolve)
-  //         }
-  //       }, (ix + 1) * 1000)
-  //     })
-  //   })
-  // }
   relogAll () {
     return new Promise((resolve, reject) => {
       const proms = this.accounts.map((acc, ix) => acc.relogDelay((ix + 1) * 1000))
