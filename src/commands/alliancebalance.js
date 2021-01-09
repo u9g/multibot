@@ -10,6 +10,9 @@ const {
   splitToChunks,
   addReduce
 } = require('../util/discord-helper')
+
+const THREADS = 3
+
 module.exports = {
   name: 'abal',
   cooldown: 5,
@@ -36,7 +39,7 @@ async function asyncRunner (accounts, identifier) {
   const allianceName = await getuseralliance(accounts, identifier)
   const members = (await getalliancemembers(accounts, allianceName)).all
   const balances = []
-  const halfs = splitToChunks(members, 3)
+  const halfs = splitToChunks(members, THREADS)
   const data = await Promise.all(halfs.map(x => doSection(accounts, x)))
   data.map(x => balances.push(...x))
   let sorted = sortArrayOfObjects(balances, 1)
