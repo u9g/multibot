@@ -61,6 +61,7 @@ function makeEmbed (title, data, timePassed) {
     .setTitle(title)
     .setDescription(desc)
     .setFooter(timeString)
+    .setColor('AQUA')
     .setTimestamp()
 }
 
