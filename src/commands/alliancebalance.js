@@ -56,7 +56,7 @@ async function doSection (accounts, usernames) {
 
 function makeEmbed (title, data, timePassed) {
   let desc = data.map((user, ix) => `${ix + 1}. **${escapeMarkdown(user[0])}**: $${user[1]}`).join('\n')
-  const total = getTotal(data)
+  const total = getTotal(data).toFixed(2)
   desc += '\n\n' + `**Total**: **__$${numberWithCommas(total)}__**`
   const timeString = `✔️ in ${timePassed}s`
   return new Discord.MessageEmbed()
