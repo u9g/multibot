@@ -20,8 +20,10 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const input = args[0]
       if (input) {
-        asyncRunner(accounts, input).then(embed => message.channel.send(embed))
-        resolve()
+        asyncRunner(accounts, input).then(embed => {
+          message.channel.send(embed)
+          resolve()
+        })
       } else {
         resolve(helpEmbed)
       }
