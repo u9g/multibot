@@ -5,21 +5,26 @@ module.exports = {
   name: 'balance',
   cooldown: 5,
   aliases: ['bal'],
+  race: true,
   description: "Get's a player's balance.",
   execute (message, args, accounts) {
-    const acc = accounts.takeOne()
+    return new Promise((resolve, reject) => {
+      const acc = accounts.takeOne()
 
-    if (acc === null) {
-      return message.channel.send(allAcountsBusy)
-    }
-    if (!args[0]) {
-      return message.channel.send(createHelpEmbed())
-    }
+      if (acc === null) {
+        resolve()
+        message.channel.send(allAcountsBusy)
+      }
+      if (!args[0]) {
+        resolve()
+        return message.channel.send(createHelpEmbed())
+      }
 
-    renderCommand(acc.bot, args[0]).then(embed => {
-      message.channel.send(embed)
-      acc.bot.removeAllListeners()
-      acc.done()
+      renderCommand(acc.bot, args[0]).then(embed => {
+        resolve()
+        message.channel.send(embed)
+        acc.done()
+      })
     })
   }
 }

@@ -54,6 +54,24 @@ function getLore (item) {
   return message
 }
 
+function getTitle (item) {
+  let message = ''
+  if (item.nbt === null) return message
+
+  const nbt = require('prismarine-nbt')
+  const ChatMessage = require('prismarine-chat')('1.12.2')
+
+  const data = nbt.simplify(item.nbt)
+  const display = data.display
+  if (display === null) return message
+
+  const name = display.Name
+  if (name === null) return message
+  message += new ChatMessage(JSON.parse(name)).toString()
+
+  return message
+}
+
 function sortArrayOfObjects (arr, field) {
   return arr.sort((a, b) => (+b[field]) - (+a[field]))
 }
@@ -84,5 +102,6 @@ module.exports = {
   getLore,
   sortArrayOfObjects,
   getTimePassed,
-  addReduce
+  addReduce,
+  getTitle
 }

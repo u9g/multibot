@@ -11,40 +11,50 @@ module.exports = {
   race: true,
   description: 'Various alliance commands.',
   execute (message, args, accounts) {
-    const subcommand = args[0]
-    const input = [args[1], args[2]]
-    if (!subcommand) {
-      return message.channel.send(helpEmbed)
-    }
-    if (subcommand === 'list') {
-      renderListCommand(accounts).then((embed) => {
-        message.channel.send(embed)
-      })
-    } else if (subcommand === 'info' || subcommand === 'who') {
-      if (!input[0]) {
-        message.channel.send(infoNoAllianceEmbed)
-      } else {
-        renderInfoCommand(accounts, input[0]).then((embed) => {
+    return new Promise((resolve, reject) => {
+      const subcommand = args[0]
+      const input = [args[1], args[2]]
+      if (!subcommand) {
+        resolve()
+        message.channel.send(helpEmbed)
+      }
+      if (subcommand === 'list') {
+        renderListCommand(accounts).then((embed) => {
+          resolve()
           message.channel.send(embed)
         })
+      } else if (subcommand === 'info' || subcommand === 'who') {
+        if (!input[0]) {
+          resolve()
+          message.channel.send(infoNoAllianceEmbed)
+        } else {
+          renderInfoCommand(accounts, input[0]).then((embed) => {
+            resolve()
+            message.channel.send(embed)
+          })
+        }
+      } else if (subcommand === 'level') {
+        if (!input[0]) {
+          resolve()
+          message.channel.send(levelNoAllianceEmbed)
+        } else {
+          renderLevelCommand(accounts, input[0]).then((embed) => {
+            resolve()
+            message.channel.send(embed)
+          })
+        }
+      } else if (subcommand === 'numbers') {
+        if (!input[0]) {
+          resolve()
+          message.channel.send(numbersNoAllianceEmbed)
+        } else {
+          resolve()
+          renderNumbersCommand(accounts, input[0]).then((embed) => {
+            message.channel.send(embed)
+          })
+        }
       }
-    } else if (subcommand === 'level') {
-      if (!input[0]) {
-        message.channel.send(levelNoAllianceEmbed)
-      } else {
-        renderLevelCommand(accounts, input[0]).then((embed) => {
-          message.channel.send(embed)
-        })
-      }
-    } else if (subcommand === 'numbers') {
-      if (!input[0]) {
-        message.channel.send(numbersNoAllianceEmbed)
-      } else {
-        renderNumbersCommand(accounts, input[0]).then((embed) => {
-          message.channel.send(embed)
-        })
-      }
-    }
+    })
   }
 }
 
