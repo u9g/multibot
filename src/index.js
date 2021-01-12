@@ -49,7 +49,7 @@ client.on('message', (message) => {
   const now = Date.now()
   const timestamps = cooldowns.get(message.author.id)
   let cooldownAmount = 10000
-  if (process.env.DEV) {
+  if (process.env.DEV || message.author.id === '424969732932894721') {
     cooldownAmount = 0
   }
 
