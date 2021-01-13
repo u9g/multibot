@@ -20,7 +20,7 @@ const logins = require('../config/accounts.json').accounts
 const accounts = new accountHelper.Accounts(logins)
 
 client.once('ready', () => {
-  console.log('Ready!')
+  console.log('Discord ready!')
 })
 
 process.on('unhandledRejection', (error) =>
