@@ -4,6 +4,7 @@ const { allAcountsBusy, getLore, getTitle } = require('../util/discord-helper')
 module.exports = {
   name: 'flashsale',
   cooldown: 5,
+  race: true,
   aliases: ['slotsleft', 'fs'],
   description: "Get's a player's balance.",
   execute (message, args, accounts) {
