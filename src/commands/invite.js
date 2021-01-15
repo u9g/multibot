@@ -3,6 +3,7 @@ const Discord = require('discord.js')
 module.exports = {
   name: 'invite',
   cooldown: 5,
+  alias: ['discord'],
   description: 'Invite the discord bot to your server!',
   execute (message, args, accounts) {
     // embed.addField("Field title", "Your text here: [link](http://example.com)")
