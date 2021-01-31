@@ -151,7 +151,7 @@ function renderCommand (bot, page) {
     const timeNow = new Date(Date.now())
     const players = []
     let showingPeople = false
-    bot.chat(`/is top ${page}`)
+    bot.chat(`/is top all ${page}`)
 
     bot.on('message', (msg) => {
       const ft = msg.toString()
@@ -196,7 +196,7 @@ const createDescription = (players, page) => {
       if (page === 1) {
         page = 0
       }
-      return `${15 * page + ix + 1}. **${ign}** has island level **${lvl}**`
+      return `${10 * page + ix + 1}. **${ign}** has island level **${lvl}**`
     })
     .join('\n')
 }
