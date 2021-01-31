@@ -53,6 +53,9 @@ module.exports = {
             message.channel.send(embed)
           })
         }
+      } else {
+        message.channel.send(helpEmbed)
+        resolve()
       }
     })
   }

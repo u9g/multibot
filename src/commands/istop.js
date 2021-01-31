@@ -160,7 +160,7 @@ function renderCommand (bot, page) {
       } else if (showingPeople && regex.user.test(ft)) {
         const [, ign, level] = ft.match(regex.user)
         players.push([ign, level])
-        if (players.length === 15) {
+        if (players.length === 10) {
           showingPeople = false
           const timePassed = getTimePassed(timeNow)
           const embed = createEmbed(players, page, timePassed)

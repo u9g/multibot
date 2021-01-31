@@ -32,10 +32,11 @@ function renderCommand (bot, ign) {
     let playersList = []
     let showingPeople = false
 
-    repeatCommand(bot, '/is top', 5)
+    repeatCommand(bot, '/is top all', 5)
 
     bot.on('message', (msg) => {
       const text = msg.toString()
+      console.log(text)
       if (regex.start.test(text)) showingPeople = true
       else if (showingPeople) {
         // parse data
@@ -43,7 +44,7 @@ function renderCommand (bot, ign) {
         const points = getIslandPoints(msg)
         playersList.push([ign, points])
         // once all data is collected
-        if (playersList.length === 60) {
+        if (playersList.length === 40) {
           const sortedPlayersList = sortArr(playersList)
           const embed = createEmbed(sortedPlayersList)
           bot.removeAllListeners(['message'])
@@ -51,10 +52,10 @@ function renderCommand (bot, ign) {
           playersList = []
         }
         // if a page has just been finished
-        if (playersList.length % 15 === 0) showingPeople = false
+        if (playersList.length % 10 === 0) showingPeople = false
       }
     })
-    bot.chat(`/bal ${ign}`)
+    // bot.chat(`/bal ${ign}`)
   })
 }
 
@@ -77,7 +78,7 @@ function createEmbed (players) {
 }
 
 function repeatCommand (bot, cmd, count) {
-  for (let i = 0; i < count; i++) {
+  for (let i = 1; i < count + 1; i++) {
     setTimeout(() => bot.chat(`${cmd} ${i}`), 75 * (i + 1))
   }
 }
