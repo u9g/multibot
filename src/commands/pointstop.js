@@ -36,7 +36,6 @@ function renderCommand (bot, ign) {
 
     bot.on('message', (msg) => {
       const text = msg.toString()
-      console.log(text)
       if (regex.start.test(text)) showingPeople = true
       else if (showingPeople) {
         // parse data
