@@ -84,7 +84,7 @@ async function displayData (timeframe) {
   const MongoClient = require('mongodb').MongoClient
   const client = new MongoClient(process.env.MONGODB_CF_LOGIN, { useNewUrlParser: true, useUnifiedTopology: true })
   await client.connect()
-  const collection = client.db('cfs').collection('s10')
+  const collection = client.db('cfs').collection('s11')
   const dataCursor = aggregateTopWinners(collection, timeframe)
   const data = await dataCursor
   // done with db

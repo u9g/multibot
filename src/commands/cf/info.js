@@ -14,7 +14,7 @@ async function displayData () {
   const MongoClient = require('mongodb').MongoClient
   const client = new MongoClient(process.env.MONGODB_CF_LOGIN, { useNewUrlParser: true, useUnifiedTopology: true })
   await client.connect()
-  const collection = client.db('cfs').collection('s10')
+  const collection = client.db('cfs').collection('s11')
   const countCursor = aggregateCount(collection)
   const count = (await countCursor)[0].winner
   const totalCursor = aggregateTotal(collection)

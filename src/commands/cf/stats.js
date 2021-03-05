@@ -2,19 +2,20 @@ require('dotenv').config()
 const Discord = require('discord.js')
 const { numberWithCommas, escapeMarkdown, addReduce } = require('../../util/discord-helper')
 
-function renderCommand (message, ign) {
-  return new Promise((resolve, reject) => {
-    displayData('MaohSadao').then(embed => {
-      message.channel.send(embed)
-    })
-  })
+async function renderCommand (message, ign) {
+  const args = message.content.split(' ')
+  if (!args[2]) message.channel.send('Command format: `>cf stats <name>`')
+  else {
+    const embed = await displayData(args[2])
+    message.channel.send(embed)
+  }
 }
 
 async function displayData (ign) {
   const MongoClient = require('mongodb').MongoClient
   const client = new MongoClient(process.env.MONGODB_CF_LOGIN, { useNewUrlParser: true, useUnifiedTopology: true })
   await client.connect()
-  const collection = client.db('cfs').collection('s10')
+  const collection = client.db('cfs').collection('s11')
   const recentDataCursor = aggregateUser(collection, ign)
   const recent = await recentDataCursor
   // done with db
@@ -38,6 +39,14 @@ function aggregateUser (collection, ign) {
 
 function makeEmbed (recent, ign) {
   const smallRecent = JSON.parse(JSON.stringify(recent)).splice(0, 5)
+  if (smallRecent.length === 0) {
+    return new Discord.MessageEmbed()
+      .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
+      .setTitle(`${ign}'s CF stats`)
+      .setDescription('No data found')
+      .setColor('AQUA')
+      .setTimestamp()
+  }
   const recentCfs = smallRecent.map(cf => {
     // decide if its a winning cf
     let won = false
