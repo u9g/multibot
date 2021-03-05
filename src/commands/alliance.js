@@ -14,10 +14,6 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const subcommand = args[0]
       const input = [args[1], args[2]]
-      if (!subcommand) {
-        resolve()
-        message.channel.send(helpEmbed)
-      }
       if (subcommand === 'list') {
         renderListCommand(accounts).then((embed) => {
           resolve()
