@@ -128,8 +128,10 @@ module.exports = {
         resolve()
       } else if (isNaN(args[1])) {
         sendList(message.channel, message.author, acc, 1)
+        resolve()
       } else {
         sendList(message.channel, message.author, acc, +args[1])
+        resolve()
       }
     })
   }
