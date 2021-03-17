@@ -9,6 +9,7 @@ module.exports = {
   name: 'istop',
   cooldown: 5,
   description: 'Gets either the top 15 players or the given page of level top.',
+  race: true,
   execute (message, args, accounts) {
     // x
     const emojiNext = '➡' // unicode emoji are identified by the emoji itself
