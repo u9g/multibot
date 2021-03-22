@@ -10,7 +10,8 @@ module.exports = {
   cooldown: 5,
   aliases: ['balancetop'],
   description: 'Gets either the top 15 players or the given page of level top.',
-  execute (message, args, accounts) {
+  race: true,
+  async execute (message, args, accounts) {
     // x
     const emojiNext = '➡' // unicode emoji are identified by the emoji itself
     const emojiPrevious = '⬅'
@@ -120,19 +121,16 @@ module.exports = {
       })
     }
 
-    return new Promise((resolve, reject) => {
-      // get account
-      const acc = accounts.takeOne()
-      // if there is no account
-      if (acc === null) {
-        message.channel.send(allAcountsBusy)
-        resolve()
-      } else if (isNaN(args[1])) {
-        sendList(message.channel, message.author, acc, 1)
-      } else {
-        sendList(message.channel, message.author, acc, +args[1])
-      }
-    })
+    // get account
+    const acc = accounts.takeOne()
+    // if there is no account
+    if (acc === null) {
+      message.channel.send(allAcountsBusy)
+    } else if (isNaN(args[1])) {
+      sendList(message.channel, message.author, acc, 1)
+    } else {
+      sendList(message.channel, message.author, acc, +args[1])
+    }
   }
 }
 

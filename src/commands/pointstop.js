@@ -6,18 +6,18 @@ module.exports = {
   cooldown: 5,
   aliases: ['ispointstop', 'ptop'],
   description: "Get's a player's balance.",
-  execute (message, args, accounts) {
+  race: true,
+  async execute (message, args, accounts) {
     const acc = accounts.takeOne()
 
     if (acc === null) {
       return message.channel.send(allAcountsBusy)
     }
 
-    renderCommand(acc.bot, args[0]).then(embed => {
-      message.channel.send(embed)
-      acc.bot.removeAllListeners()
-      acc.done()
-    })
+    const embed = await renderCommand(acc.bot, args[0])
+    message.channel.send(embed)
+    acc.bot.removeAllListeners()
+    acc.done()
   }
 }
 

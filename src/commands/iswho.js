@@ -4,8 +4,9 @@ const { allAcountsBusy, escapeMarkdown, sortArrayOfObjects } = require('../util/
 module.exports = {
   name: 'iswho',
   cooldown: 5,
+  race: true,
   description: "Get's a player's balance.",
-  execute (message, args, accounts) {
+  async execute (message, args, accounts) {
     const acc = accounts.takeOne()
 
     if (acc === null) {
@@ -14,12 +15,11 @@ module.exports = {
     if (!args[0]) {
       return message.channel.send(createHelpEmbed())
     }
-
-    renderCommand(acc.bot, args[0]).then(embed => {
-      message.channel.send(embed)
-      acc.bot.removeAllListeners()
-      acc.done()
-    })
+    
+    const embed = await renderCommand(acc.bot, args[0])
+    message.channel.send(embed)
+    acc.bot.removeAllListeners()
+    acc.done()
   }
 }
 
