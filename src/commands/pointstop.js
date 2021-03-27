@@ -32,7 +32,7 @@ function renderCommand (bot, ign) {
     let playersList = []
     let showingPeople = false
 
-    repeatCommand(bot, '/is top all', 10)
+    repeatCommand(bot, '/is top all', 11)
 
     bot.on('message', (msg) => {
       const text = msg.toString()
