@@ -11,7 +11,7 @@ module.exports = {
   description: 'boss top lol',
   execute (message, args, accounts) {
     if (args[0] === 'top') {
-      bossTop(message.client).then(o => o.message.channel.send(o))
+      bossTop(message.client).then(o => message.channel.send(o))
     } else {
       asyncRunner(message.client).then(o => message.channel.send(o))
     }
