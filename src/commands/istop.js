@@ -127,7 +127,7 @@ module.exports = {
       if (acc === null) {
         message.channel.send(allAcountsBusy)
         resolve()
-      } else if (isNaN(args[1])) {
+      } else if (isNaN(args[1]) || args[1] === 0) {
         sendList(message.channel, message.author, acc, 1)
         resolve()
       } else {
@@ -180,8 +180,8 @@ function createEmbed (info, page, timePassed) {
   const timeString = `✔️ in ${timePassed}s`
   const title =
     page > 1
-      ? `Top Player Islands (${page} / 20)`
-      : 'Top Player Islands (1 / 20)'
+      ? `Top Player Islands (${page} / 10)`
+      : 'Top Player Islands (1 / 10)'
   return new Discord.MessageEmbed()
     .setAuthor('The Cosmic Sky Bot', 'https://i.ibb.co/7WnrkH2/download.png')
     .setTitle(title)
@@ -199,7 +199,7 @@ const createDescription = (players, page) => {
       if (page === 1) {
         page = 0
       }
-      return `${10 * page + ix + 1}. **${ign}** has island level **${lvl}**`
+      return `${(10 * (page - 1)) + ix + 1}. **${ign}** has island level **${lvl}**`
     })
     .join('\n')
 }
