@@ -196,9 +196,6 @@ const createDescription = (players, page) => {
     .map((user, ix) => {
       let [ign, lvl] = user
       ign = escapeMarkdown(ign)
-      if (page === 1) {
-        page = 0
-      }
       return `${(10 * (page - 1)) + ix + 1}. **${ign}** has island level **${lvl}**`
     })
     .join('\n')
