@@ -15,7 +15,7 @@ module.exports = {
     if (!args[0]) {
       return message.channel.send(createHelpEmbed())
     }
-    
+
     const embed = await renderCommand(acc.bot, args[0])
     message.channel.send(embed)
     acc.bot.removeAllListeners()

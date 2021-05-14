@@ -48,7 +48,11 @@ module.exports = {
         const reactingUser = r.users.cache.find((x) => !x.bot)
         if (reactingUser === author) {
           i = onCollect(r.emoji, message, i, bot)
-          message.reactions.removeAll()
+          try {
+            message.reactions.removeAll()
+          } catch (err) {
+
+          }
           if (r.emoji.name === emojiX) {
             collector.stop()
             // do nothing after clearing emojis
@@ -69,7 +73,11 @@ module.exports = {
         }
       })
       collector.on('end', (collected) => {
-        message.reactions.removeAll()
+        try {
+          message.reactions.removeAll()
+        } catch (err) {
+
+        }
         acc.done()
       })
     }

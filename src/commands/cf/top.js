@@ -57,7 +57,11 @@ function createCollectorMessage (message, author) {
     const reactingUser = r.users.cache.find((x) => !x.bot)
     if (reactingUser === author) {
       onCollect(r.emoji, message)
-      message.reactions.removeAll()
+      try {
+        message.reactions.removeAll()
+      } catch (err) {
+
+      }
       if (r.emoji.name === emojiX) {
         collector.stop()
       // do nothing after clearing emojis
@@ -76,7 +80,11 @@ function createCollectorMessage (message, author) {
     }
   })
   collector.on('end', (collected) => {
-    message.reactions.removeAll()
+    try {
+      message.reactions.removeAll()
+    } catch (err) {
+
+    }
   })
 }
 
