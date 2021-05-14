@@ -16,7 +16,7 @@ module.exports = {
     const emojiPrevious = '⬅'
     const emojiX = '❌'
     const reactionArrow = [emojiPrevious, emojiNext, emojiX]
-    const time = 60000 * 2 // time limit: 2 min
+    const time = 5000 * 2 // time limit: 2 min
     const boundaries = [1, 20]
 
     function filter (reaction, user) {
